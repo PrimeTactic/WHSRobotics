@@ -58,6 +58,9 @@ public class servoTest extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private Servo grabberServo;
+    private Servo leftClampServo;
+    private Servo rightClampServo;
+
 
     @Override
     public void runOpMode() {
@@ -68,15 +71,19 @@ public class servoTest extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         grabberServo  = hardwareMap.get(Servo.class, "grabberServo");
+        leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
+        rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        grabberServo.setDirection(Servo.Direction.FORWARD);
+        grabberServo.setDirection(Servo.Direction.REVERSE);
+        rightClampServo.setDirection(Servo.Direction.REVERSE);
+        leftClampServo.setDirection(Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        boolean goTrue = true;
+        //boolean goTrue = true;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -89,7 +96,8 @@ public class servoTest extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            if(goTrue == true)
+            //autonomous code in teleop to test out how the servo moves, runs once
+            /*if(goTrue == true)
             {
                 grabberServo.setPosition(.6);
                 sleep(2000);
@@ -104,15 +112,36 @@ public class servoTest extends LinearOpMode {
             if(gamepad1.a)
             {
                 telemetry.addLine("yay");
-            }
-            /*if(gamepad1.atRest())
-            {
-
-            }else if(gamepad1.a)
-            {
-                telemetry.addLine("??????????");
-                grabberServo.setPosition(.4);
             }*/
+            if(gamepad1.atRest())
+            {
+                grabberServo.setPosition(0);
+            }else if(gamepad1.a == true)
+            {
+                grabberServo.setPosition(.6);
+            }else if(gamepad1.b == true)
+            {
+                grabberServo.setPosition(.4);
+            }else if(gamepad1.y == true)
+            {
+                grabberServo.setPosition(.2);
+            }
+
+            if(gamepad1.atRest())
+            {
+                rightClampServo.setPosition(0);
+            }else if(gamepad1.left_stick_y != 0)
+            {
+                rightClampServo.setPosition(-gamepad1.left_stick_y);
+            }
+
+            if(gamepad1.atRest())
+            {
+                leftClampServo.setPosition(0);
+            }else if(gamepad1.left_stick_y != 0)
+            {
+                leftClampServo.setPosition(-gamepad1.left_stick_y);
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

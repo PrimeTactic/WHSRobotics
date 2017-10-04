@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="servoTests", group="Linear Opmode")
+@TeleOp(name="kiwiDrive", group="Linear Opmode")
 //@Disabled
 public class kiwiDrive extends LinearOpMode {
 
@@ -83,8 +83,8 @@ public class kiwiDrive extends LinearOpMode {
         boolean goTrue = true;
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-
+        while (opModeIsActive())
+        {
 
 
             // Show the elapsed game time and wheel power.
@@ -96,6 +96,22 @@ public class kiwiDrive extends LinearOpMode {
     //drive method that accepts two values, x and y motion
     public static void drive(double x, double y)
     {
+        //W1 = -1/2 X - sqrt(3)/2 Y + R
+        //W2 = -1/2 X + sqrt(3)/2 Y + R
+        //W3 = X + R
+    }
+
+    public static void proportionalIntegralDerivative()
+    {
+        /*Actuator_Output = Kp*P + Ki*I + Kd*D
+
+        or in easy to understand terms:
+
+        Actuator_Output =
+
+                tweakA * (distance from goal)
+        + tweakB * (change in error)
+        + tweakC * (accumulative error)*/
 
     }
 }
