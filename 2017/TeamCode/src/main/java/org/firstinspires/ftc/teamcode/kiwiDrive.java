@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.Math.sqrt;
@@ -49,7 +48,10 @@ import static java.lang.Math.sqrt;
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * http://robocup.mi.fu-berlin.de/buch/omnidrive.pdf
+ * https://stackoverflow.com/questions/3748037/how-to-control-a-kiwi-drive-robot
  */
+
 
 @TeleOp(name="kiwiDrive", group="Linear Opmode")
 //@Disabled
@@ -57,9 +59,9 @@ public class kiwiDrive extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontMotor;
-    private DcMotor leftMotor;
-    private DcMotor rightMotor;
+    private DcMotor motor1; // back motor
+    private DcMotor motor2; // left motor
+    private DcMotor motor3; // right motor
 
 
     @Override
@@ -70,15 +72,15 @@ public class kiwiDrive extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontMotor  = hardwareMap.get(DcMotor.class, "frontMotor");
-        rightMotor  = hardwareMap.get(DcMotor.class, "rightMotor");
-        leftMotor  = hardwareMap.get(DcMotor.class, "leftMotor");
+        motor1 = hardwareMap.get(DcMotor.class, "motor1");
+        motor3 = hardwareMap.get(DcMotor.class, "motor3");
+        motor2 = hardwareMap.get(DcMotor.class, "motor2");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        frontMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor3.setDirection(DcMotor.Direction.FORWARD);
+        motor2.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -87,13 +89,26 @@ public class kiwiDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
+
+            if(gamepad1.a)
+            {
+                motor1.setPower(1);
+            }else if(gamepad1.b)
+            {
+                motor3.setPower(1);
+            }else if(gamepad1.x)
+            {
+                motor2.setPower(1);
+            }
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             if(gamepad1.atRest()) {
                 turnOffMotors();
             }
-            else if(gamepad1.right_stick_y !=0 || gamepad1.right_stick_x != 0){
-                drive(-gamepad1.right_stick_x, gamepad1.right_stick_y);
+            else if(gamepad1.right_stick_y !=0 || gamepad1.right_stick_x != 0)
+            {
+                drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
             }
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -103,19 +118,37 @@ public class kiwiDrive extends LinearOpMode {
         }
     }
 
+    private void drive2(double x, double y)
+    {
+        horizontalMove(x);
+        verticalMove(y);
+    }
+
+    private void verticalMove(double power)
+    {
+        motor2.setPower(-power);
+        motor3.setPower(power);
+    }
+
+    private void horizontalMove(double power)
+    {
+        motor1.setPower(power);
+        motor2.setPower(-power/2);
+    }
+
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        leftMotor.setPower( -1/2 * x - sqrt(3)/2 * y );
-        rightMotor.setPower(-1/2 * x + sqrt(3)/2 * y );
-        frontMotor.setPower(x);
+        motor1.setPower(x);
+        motor2.setPower( -1/2 * x - sqrt(3)/2 * y );
+        motor3.setPower(-1/2 * x + sqrt(3)/2 * y );
     }
 
     private void turnOffMotors()
     {
-        frontMotor.setPower(0);
-        rightMotor.setPower(0);
-        leftMotor.setPower(0);
+        motor1.setPower(0);
+        motor3.setPower(0);
+        motor2.setPower(0);
     }
 
     public void proportionalIntegralDerivative()
