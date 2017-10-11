@@ -35,6 +35,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static java.lang.Math.sqrt;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -80,11 +82,17 @@ public class kiwiDrive extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        boolean goTrue = true;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
+            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            if(gamepad1.atRest()) {
+                turnOffMotors();
+            }
+            else if(gamepad1.right_stick_y !=0 || gamepad1.right_stick_x != 0){
+                drive(-gamepad1.right_stick_x, gamepad1.right_stick_y);
+            }
 
 
             // Show the elapsed game time and wheel power.
@@ -94,14 +102,20 @@ public class kiwiDrive extends LinearOpMode {
     }
 
     //drive method that accepts two values, x and y motion
-    public static void drive(double x, double y)
+    public void drive(double x, double y)
     {
-        //W1 = -1/2 X - sqrt(3)/2 Y + R
-        //W2 = -1/2 X + sqrt(3)/2 Y + R
-        //W3 = X + R
+        leftMotor.setPower(-1/2 * x - sqrt(3)/2 * y ); // + R
+        rightMotor.setPower(-1/2 * x + sqrt(3)/2 * y ); //+R
+        frontMotor.setPower(x);//+ R
     }
 
-    public static void proportionalIntegralDerivative()
+    private void turnOffMotors(){
+        frontMotor.setPower(0);
+        rightMotor.setPower(0);
+        leftMotor.setPower(0);
+    }
+
+    public void proportionalIntegralDerivative()
     {
         /*Actuator_Output = Kp*P + Ki*I + Kd*D
 
