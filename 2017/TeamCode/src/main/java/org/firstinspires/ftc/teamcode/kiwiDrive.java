@@ -61,6 +61,7 @@ public class kiwiDrive extends LinearOpMode {
     private DcMotor leftMotor;
     private DcMotor rightMotor;
 
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -94,9 +95,10 @@ public class kiwiDrive extends LinearOpMode {
                 drive(-gamepad1.right_stick_x, gamepad1.right_stick_y);
             }
 
-
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("x value right stick", -gamepad1.right_stick_x);
+            telemetry.addData("y value right stick", gamepad1.right_stick_y);
             telemetry.update();
         }
     }
@@ -104,12 +106,13 @@ public class kiwiDrive extends LinearOpMode {
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        leftMotor.setPower(-1/2 * x - sqrt(3)/2 * y ); // + R
-        rightMotor.setPower(-1/2 * x + sqrt(3)/2 * y ); //+R
-        frontMotor.setPower(x);//+ R
+        leftMotor.setPower( -1/2 * x - sqrt(3)/2 * y );
+        rightMotor.setPower(-1/2 * x + sqrt(3)/2 * y );
+        frontMotor.setPower(x);
     }
 
-    private void turnOffMotors(){
+    private void turnOffMotors()
+    {
         frontMotor.setPower(0);
         rightMotor.setPower(0);
         leftMotor.setPower(0);
