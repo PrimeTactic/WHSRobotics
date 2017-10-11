@@ -60,6 +60,9 @@ public class servoTest extends LinearOpMode {
     private Servo grabberServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    private double row1Position = 0.2;
+    private double row2Position = 0.4;
+    private double row3Position = 0.6;
 
 
     @Override
@@ -148,5 +151,13 @@ public class servoTest extends LinearOpMode {
             telemetry.addData("Servo", "grabber (%.2f)", grabberPosition);
             telemetry.update();
         }
+    }
+
+    public void gotoRow(int row){
+        // Go to Row (Number)
+    }
+
+    public void toggleGrabber(){
+        //Clamp/Release Grabber
     }
 }
