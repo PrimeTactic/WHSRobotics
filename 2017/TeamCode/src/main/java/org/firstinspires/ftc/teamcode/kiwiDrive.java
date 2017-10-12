@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static java.lang.Math.sqrt;
+import java.lang.Math.*;
 
 
 /**
@@ -56,13 +56,12 @@ import static java.lang.Math.sqrt;
 @TeleOp(name="kiwiDrive", group="Linear Opmode")
 //@Disabled
 public class kiwiDrive extends LinearOpMode {
-
+    
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1; // back motor
     private DcMotor motor2; // left motor
     private DcMotor motor3; // right motor
-
 
     @Override
     public void runOpMode() {
@@ -89,26 +88,28 @@ public class kiwiDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-
-            if(gamepad1.a)
+            // on button presses
+            if (gamepad1.a)
             {
                 motor1.setPower(1);
-            }else if(gamepad1.b)
+            }
+            else if (gamepad1.b)
             {
                 motor3.setPower(1);
-            }else if(gamepad1.x)
+            }
+            else if (gamepad1.x)
             {
                 motor2.setPower(1);
             }
-            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-            if(gamepad1.atRest()) {
+            // on gamepad movement       
+            if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            {
                 turnOffMotors();
             }
-            else if(gamepad1.right_stick_y !=0 || gamepad1.right_stick_x != 0)
+            else //(note: we dont need to check if the gamepad is at rest here since we already checked that in the above statement)
             {
                 drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
             }
-
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -140,8 +141,8 @@ public class kiwiDrive extends LinearOpMode {
     public void drive(double x, double y)
     {
         motor1.setPower(x);
-        motor2.setPower( -1/2 * x - sqrt(3)/2 * y );
-        motor3.setPower(-1/2 * x + sqrt(3)/2 * y );
+        motor2.setPower(-1/2 * x - sqrt(3)/2 * y);
+        motor3.setPower(-1/2 * x + sqrt(3)/2 * y);
     }
 
     private void turnOffMotors()
@@ -150,18 +151,5 @@ public class kiwiDrive extends LinearOpMode {
         motor3.setPower(0);
         motor2.setPower(0);
     }
-
-    public void proportionalIntegralDerivative()
-    {
-        /*Actuator_Output = Kp*P + Ki*I + Kd*D
-
-        or in easy to understand terms:
-
-        Actuator_Output =
-
-                tweakA * (distance from goal)
-        + tweakB * (change in error)
-        + tweakC * (accumulative error)*/
-
-    }
+    
 }
