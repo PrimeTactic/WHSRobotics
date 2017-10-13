@@ -111,12 +111,15 @@ public class kiwiDrive extends LinearOpMode {
             else //(note: we dont need to check if the gamepad is at rest here since we already checked that in the above statement)
             {
                 drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
+                turn(gamepad1.left_stick_x);
             }
+
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("x value right stick", -gamepad1.right_stick_x);
-            telemetry.addData("y value right stick", gamepad1.right_stick_y);
+            telemetry.addData("x value right stick", gamepad1.right_stick_x);
+            telemetry.addData("y value right stick", -gamepad1.right_stick_y);
             telemetry.update();
         }
     }
@@ -124,9 +127,12 @@ public class kiwiDrive extends LinearOpMode {
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
+        double power1 = x;
+        double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
+        double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
         motor1.setPower(x);
-        motor2.setPower(-1/2 * x - sqrt(3)/2 * y);
-        motor3.setPower(-1/2 * x + sqrt(3)/2 * y);
+        motor2.setPower(power2);
+        motor3.setPower(power3);
     }
 
     private void turnOffMotors()
@@ -134,6 +140,13 @@ public class kiwiDrive extends LinearOpMode {
         motor1.setPower(0);
         motor3.setPower(0);
         motor2.setPower(0);
+    }
+
+    private void turn(double speed)
+    {
+        motor1.setPower(speed/-2);
+        motor3.setPower(speed/-2);
+        motor2.setPower(speed/-2);
     }
     
 }
