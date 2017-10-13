@@ -128,6 +128,14 @@ public class servoTest extends LinearOpMode {
             }else if(gamepad1.y == true)
             {
                 armServo.setPosition(.2);
+            }else if(gamepad1.x == true)
+            {
+                rightClampServo.setPosition(.6);
+                leftClampServo.setPosition(.6);
+            }else if(gamepad1.x == false)
+            {
+                rightClampServo.setPosition(0);
+                leftClampServo.setPosition(0);
             }
 
             if(gamepad1.atRest())
