@@ -121,24 +121,6 @@ public class kiwiDrive extends LinearOpMode {
         }
     }
 
-    private void drive2(double x, double y)
-    {
-        horizontalMove(x);
-        verticalMove(y);
-    }
-
-    private void verticalMove(double power)
-    {
-        motor2.setPower(-power);
-        motor3.setPower(power);
-    }
-
-    private void horizontalMove(double power)
-    {
-        motor1.setPower(power);
-        motor2.setPower(-power/2);
-    }
-
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
