@@ -125,7 +125,7 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
         parameters.cameraMonitorFeedback = parameters.cameraMonitorFeedback.AXES;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
 
         /**
          * Load the data sets that for the trackable objects we wish to track. These particular data
@@ -136,11 +136,8 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
          * documentation directory.
          */
 
-        VuforiaTrackables beacons = this.vuforia.loadTrackablesFromAsset("FTC_2016-17");
-        beacons.get(0).setName("Wheels");
-        beacons.get(1).setName("Tools");
-        beacons.get(2).setName("Legos");
-        beacons.get(3).setName("Gears");
+        VuforiaTrackables beacons = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        beacons.get(0).setName("RelicRecovery");
 
         VuforiaTrackableDefaultListener wheels =(VuforiaTrackableDefaultListener) beacons.get(0).getListener();
 
