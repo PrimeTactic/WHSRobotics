@@ -164,10 +164,12 @@ public class servoTest extends LinearOpMode {
         double armServoValue = armServo.getPosition();
         double leftClampValue = leftClampServo.getPosition();
         double rightClampValue = rightClampServo.getPosition();
+        boolean aButton = gamepad1.a;
         telemetry.addData("Run Time", runtime.toString());
         telemetry.addData("Arm servo position", armServoValue);
         telemetry.addData("Left clamp position", leftClampValue);
         telemetry.addData("Right clamp position", rightClampValue);
+        telemetry.addData("a button", aButton);
         telemetry.update();
     }
 
