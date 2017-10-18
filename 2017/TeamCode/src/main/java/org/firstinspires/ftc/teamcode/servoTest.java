@@ -116,9 +116,9 @@ public class servoTest extends LinearOpMode {
             {
                 telemetry.addLine("yay");
             }*/
-            if(gamepad1.atRest())
+            if(gamepad1.atRest())  // consider removing
             {
-                armServo.setPosition(1);
+                armServo.setPosition(1);   //^
             }else if(gamepad1.a == true)
             {
                 armServo.setPosition(.6);
@@ -145,6 +145,7 @@ public class servoTest extends LinearOpMode {
             {
                 rightClampServo.setPosition(-gamepad1.left_stick_y);
             }
+            //Values are just placeholders for now. We will add real ones after we run telemetry
 
             if(gamepad1.atRest())
             {
