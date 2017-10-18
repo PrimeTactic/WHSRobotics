@@ -127,7 +127,7 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
 
         Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
 
-        /**
+        /*
          * Load the data sets that for the trackable objects we wish to track. These particular data
          * sets are stored in the 'assets' part of our application (you'll see them in the Android
          * Studio 'Project' view over there on the left of the screen). You can make your own datasets
