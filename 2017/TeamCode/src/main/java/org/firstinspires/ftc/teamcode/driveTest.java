@@ -34,8 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.lang.Math.*;
-
 import static java.lang.Math.sqrt;
 
 
@@ -55,33 +53,24 @@ import static java.lang.Math.sqrt;
  */
 
 // this is a test comment
-@TeleOp(name="kiwiDrive", group="Linear Opmode")
+@TeleOp(name="driveTest", group="Linear Opmode")
 //@Disabled
-public class kiwiDrive extends LinearOpMode {
+public class driveTest extends LinearOpMode {
     
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1; // back motor
     private DcMotor motor2; // left motor
-    private DcMotor motor3; // right motor
+    private DcMotor motor3; // right moto
+    private boolean manualDrive = false; // indicates if manual drive is on/off
+    private const double val = (sqrt(3.0)/2.0);
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        motor1 = hardwareMap.get(DcMotor.class, "motor1");
-        motor3 = hardwareMap.get(DcMotor.class, "motor3");
-        motor2 = hardwareMap.get(DcMotor.class, "motor2");
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        motor1.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
+        initMotors();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -91,34 +80,37 @@ public class kiwiDrive extends LinearOpMode {
         while (opModeIsActive())
         {
             // on button presses
-            if (gamepad1.a)
+            if (gamepad1.a && !manualDrive)
             {
-                motor1.setPower(1);
+                toggleMotor(motor1);
             }
-            else if (gamepad1.b)
+
+            if (gamepad1.b && !manualDrive)
             {
-                motor3.setPower(1);
+                toggleMotor(motor2);
             }
-            else if (gamepad1.x)
+
+            if (gamepad1.x && !manualDrive)
             {
-                motor2.setPower(1);
+                toggleMotor(motor3);
             }
-            // on gamepad movement       
-            if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-            if (gamepad1.atRest() && !(gamepad1.a || gamepad1.b || gamepad1.x))  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+
+            if (gamepad1.y)
             {
-                turnOffMotors();
+                manualDrive = !manualDrive;
             }
-            else
+
+            // on gamepad movement
+            if (manualDrive)
             {
                 drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
-                turn(gamepad1.left_stick_x);
+                //turn(gamepad1.left_stick_x);
             }
 
 
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Run Time", runtime.toString());
             telemetry.addData("x value right stick", gamepad1.right_stick_x);
             telemetry.addData("y value right stick", -gamepad1.right_stick_y);
             telemetry.addData("motor 1 power" , motor1.getPower());
@@ -134,9 +126,15 @@ public class kiwiDrive extends LinearOpMode {
         double power1 = x;
         double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
         double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
-        motor1.setPower(x);
+        motor1.setPower(power1);
         motor2.setPower(power2);
         motor3.setPower(power3);
+
+        telemetry.addData("drive x value", x);
+        telemetry.addData("drive y value", y);
+        telemetry.addData("motor 1 power" , power1);
+        telemetry.addData("motor 2 power" , power2);
+        telemetry.addData("motor 3 power" , power3);
     }
 
     private void turnOffMotors()
@@ -151,6 +149,38 @@ public class kiwiDrive extends LinearOpMode {
         motor1.setPower(speed/-2);
         motor3.setPower(speed/-2);
         motor2.setPower(speed/-2);
+    }
+
+    private void toggleMotor(DcMotor motor)
+    {
+        double power = motor.getPower();
+
+        if (power > 0.5)
+        {
+            // The power was high so make it low.
+            motor.setPower(0);
+        }
+        else
+        {
+            // The power was low so make it high.
+            motor.setPower(1);
+        }
+    }
+
+    private void initMotors()
+    {
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        motor1 = hardwareMap.get(DcMotor.class, "motor1");
+        motor3 = hardwareMap.get(DcMotor.class, "motor3");
+        motor2 = hardwareMap.get(DcMotor.class, "motor2");
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor3.setDirection(DcMotor.Direction.FORWARD);
+        motor2.setDirection(DcMotor.Direction.FORWARD);
     }
     
 }
