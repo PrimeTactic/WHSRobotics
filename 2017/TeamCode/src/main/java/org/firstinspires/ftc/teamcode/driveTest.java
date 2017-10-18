@@ -63,7 +63,7 @@ public class driveTest extends LinearOpMode {
     private DcMotor motor2; // left motor
     private DcMotor motor3; // right moto
     private boolean manualDrive = false; // indicates if manual drive is on/off
-    private const double val = (sqrt(3.0)/2.0);
+    private final double val = (sqrt(3.0)/2.0);
 
     @Override
     public void runOpMode() {
