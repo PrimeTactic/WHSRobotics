@@ -81,7 +81,7 @@ public class servoTest extends LinearOpMode {
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         armServo.setDirection(Servo.Direction.FORWARD);
-        rightClampServo.setDirection(Servo.Direction.FORWARD);
+        rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
@@ -123,7 +123,7 @@ public class servoTest extends LinearOpMode {
             // }
             if(gamepad1.a)
             {
-                armServo.setPosition(1);
+                armServo.setPosition(.8);
             }
             else if(gamepad1.b) // middle arm position
             {
@@ -142,8 +142,8 @@ public class servoTest extends LinearOpMode {
                     leftClampServo.setPosition(0);
                 }
                 else {
-                    rightClampServo.setPosition(1);
-                    leftClampServo.setPosition(1);
+                    rightClampServo.setPosition(.5);
+                    leftClampServo.setPosition(.5);
                 }
             }
             //else if(gamepad1.x)
