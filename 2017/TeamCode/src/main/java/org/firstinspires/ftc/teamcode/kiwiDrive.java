@@ -105,6 +105,7 @@ public class kiwiDrive extends LinearOpMode {
             }
             // on gamepad movement       
             if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            if (gamepad1.atRest() && !(gamepad1.a || gamepad1.b || gamepad1.x))  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             {
                 turnOffMotors();
             }
