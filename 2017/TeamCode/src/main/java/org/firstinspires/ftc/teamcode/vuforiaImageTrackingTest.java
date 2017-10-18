@@ -78,7 +78,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 @TeleOp(name="vuforiaImageTrackingTest", group ="LinearOpMode")
-@Disabled
+//@Disabled
 public class vuforiaImageTrackingTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia Sample";
