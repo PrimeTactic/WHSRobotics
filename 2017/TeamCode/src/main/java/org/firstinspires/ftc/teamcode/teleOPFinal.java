@@ -129,7 +129,7 @@ public class teleOPFinal extends LinearOpMode {
             {
                 armServo.setPosition(0);
             }
-            
+
             if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
                 // toggles if the arm is clamping every time x is pressed
@@ -179,8 +179,8 @@ public class teleOPFinal extends LinearOpMode {
         //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
         //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
         motor1.setPower(x);
-        motor2.setPower((-.5) * x) - ((sqrt(3)/(double)2) * y);
-        motor3.setPower((-.5) * x) + ((sqrt(3)/(double)2) * y);
+        motor2.setPower(((-.5) * x) - ((sqrt(3)/(double)2) * y));
+        motor3.setPower(((-.5) * x) + ((sqrt(3)/(double)2) * y));
     }
 
     private void turnOffMotors()
