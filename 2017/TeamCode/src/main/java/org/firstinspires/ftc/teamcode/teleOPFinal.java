@@ -66,6 +66,7 @@ public class teleOPFinal extends LinearOpMode {
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    int cooldown = 100;
     private boolean isClamping = true;
     private double row1Position = 0.2;
     private double row2Position = 0.4;
@@ -82,6 +83,7 @@ public class teleOPFinal extends LinearOpMode {
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
         motor3 = hardwareMap.get(DcMotor.class, "motor3");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
+
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
@@ -91,6 +93,7 @@ public class teleOPFinal extends LinearOpMode {
         motor1.setDirection(DcMotor.Direction.FORWARD);
         motor3.setDirection(DcMotor.Direction.FORWARD);
         motor2.setDirection(DcMotor.Direction.FORWARD);
+
         armServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
@@ -102,7 +105,7 @@ public class teleOPFinal extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-            // on gamepad movement
+            // on gamepad movement (controls robot wheel movment)
             if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             {
                 turnOffMotors();
@@ -113,21 +116,24 @@ public class teleOPFinal extends LinearOpMode {
                 turn(gamepad1.left_stick_x);
             }
 
-            if(gamepad1.a)
+            // on button presses (controls arm movement)
+            if (gamepad1.a)
             {
                 armServo.setPosition(.8);
             }
-            else if(gamepad1.b) // middle arm position
+            else if (gamepad1.b) // middle arm position
             {
                 armServo.setPosition(.5);
             }
-            else if(gamepad1.y)
+            else if (gamepad1.y)
             {
                 armServo.setPosition(0);
             }
-            else if(gamepad1.x)
+            
+            if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
                 // toggles if the arm is clamping every time x is pressed
+                cooldown = 100; // reset cooldown
                 isClamping = !isClamping;
                 if (isClamping) {
                     rightClampServo.setPosition(0);
@@ -138,41 +144,43 @@ public class teleOPFinal extends LinearOpMode {
                     leftClampServo.setPosition(.5);
                 }
             }
+            else if (cooldown > 0) {
+                cooldown--;
+            }
 
-
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            // Show the elapsed game time and wheel power
             updateTelemetry();
         }
     }
 
     public void updateTelemetry(){
-        double armServoValue = armServo.getPosition();
-        double leftClampValue = leftClampServo.getPosition();
-        double rightClampValue = rightClampServo.getPosition();
-        boolean aButton = gamepad1.a;
-        telemetry.addData("Arm servo position", armServoValue);
-        telemetry.addData("Left clamp position", leftClampValue);
-        telemetry.addData("Right clamp position", rightClampValue);
-        telemetry.addData("a button", aButton);
-        telemetry.addData("x value right stick", gamepad1.right_stick_x);
-        telemetry.addData("y value right stick", -gamepad1.right_stick_y);
-        telemetry.addData("motor 1 power" , motor1.getPower());
-        telemetry.addData("motor 2 power" , motor2.getPower());
-        telemetry.addData("motor 3 power" , motor3.getPower());
+        //[dont need to make variables for servo values (redundent)]
+        //double armServoValue = armServo.getPosition();
+        //double leftClampValue = leftClampServo.getPosition();
+        //double rightClampValue = rightClampServo.getPosition();
+        //boolean aButton = gamepad1.a;
+        telemetry.addData("Status", "Run Time   : " + runtime.toString());
+        telemetry.addData("Arm servo position   : " , armServo.getPosition());
+        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
+        telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
+        telemetry.addData("a button             :"  , gamepad1.a);
+        telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
+        telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
+        telemetry.addData("motor 1 power        : " , motor1.getPower());
+        telemetry.addData("motor 2 power        : " , motor2.getPower());
+        telemetry.addData("motor 3 power        : " , motor3.getPower());
         telemetry.update();
     }
 
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        double power1 = x;
-        double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
-        double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
+        //double power1 = x;
+        //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
+        //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
         motor1.setPower(x);
-        motor2.setPower(power2);
-        motor3.setPower(power3);
+        motor2.setPower((-.5) * x) - ((sqrt(3)/(double)2) * y);
+        motor3.setPower((-.5) * x) + ((sqrt(3)/(double)2) * y);
     }
 
     private void turnOffMotors()
