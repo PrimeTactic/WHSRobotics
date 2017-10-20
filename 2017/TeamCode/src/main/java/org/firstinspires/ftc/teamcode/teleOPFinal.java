@@ -163,7 +163,7 @@ public class teleOPFinal extends LinearOpMode {
         telemetry.addData("Arm servo position   : " , armServo.getPosition());
         telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
         telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("a button             :"  , gamepad1.a);
+        telemetry.addData("a button             : " , gamepad1.a);
         telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
         telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
         telemetry.addData("motor 1 power        : " , motor1.getPower());
