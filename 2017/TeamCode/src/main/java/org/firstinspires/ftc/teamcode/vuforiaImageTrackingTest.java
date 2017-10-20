@@ -136,10 +136,10 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
          * documentation directory.
          */
 
-        VuforiaTrackables beacons = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        beacons.get(0).setName("RelicRecovery");
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTrackables.get(0).setName("RelicRecovery");
 
-        VuforiaTrackableDefaultListener wheels =(VuforiaTrackableDefaultListener) beacons.get(0).getListener();
+        VuforiaTrackableDefaultListener wheels =(VuforiaTrackableDefaultListener) relicTrackables.get(0).getListener();
 
 
         /** Wait for the game to begin */
@@ -148,7 +148,7 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
         waitForStart();
 
         /** Start tracking the data sets we care about. */
-        beacons.activate();
+        relicTrackables.activate();
 
 
         // get angles and distance from target
@@ -157,7 +157,8 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            for(VuforiaTrackable beac: beacons){
+            for(VuforiaTrackable beac: relicTrackables){
+
                 OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) beac.getListener()).getPose();
 
                 if(pose != null){
