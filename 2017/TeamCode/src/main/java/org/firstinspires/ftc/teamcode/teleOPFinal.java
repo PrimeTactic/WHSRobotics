@@ -178,9 +178,14 @@ public class teleOPFinal extends LinearOpMode {
         //double power1 = x;
         //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
         //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
-        motor1.setPower(x);
-        motor2.setPower(((-.5) * x) - ((sqrt(3)/2.0) * y));
-        motor3.setPower(((-.5) * x) + ((sqrt(3)/2.0) * y));
+        double divisor = 1;
+        // for precise movement
+        if (gamepad1.right_bumper) {
+            divisor = 2;
+        }
+        motor1.setPower(x / divisor);
+        motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / divisor);
+        motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / divisor);
     }
 
     private void turnOffMotors()
@@ -195,7 +200,7 @@ public class teleOPFinal extends LinearOpMode {
         double divisor = 2;
         // of the bumper is being held than make the robot turn slower
         if (gamepad1.left_bumper) {
-            divisor = 5;
+            divisor = 4;
         }
         motor1.setPower(-speed/divisor);
         motor3.setPower(-speed/divisor);
