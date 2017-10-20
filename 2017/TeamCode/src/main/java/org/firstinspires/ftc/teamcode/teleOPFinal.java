@@ -66,7 +66,7 @@ public class teleOPFinal extends LinearOpMode {
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
-    int cooldown = 100;
+    int cooldown = 1000;
     private boolean isClamping = true;
     private double row1Position = 0.2;
     private double row2Position = 0.4;
@@ -133,7 +133,7 @@ public class teleOPFinal extends LinearOpMode {
             if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
                 // toggles if the arm is clamping every time x is pressed
-                cooldown = 100; // reset cooldown
+                cooldown = 1000; // reset cooldown
                 isClamping = !isClamping;
                 if (isClamping) {
                     rightClampServo.setPosition(0);
@@ -179,8 +179,8 @@ public class teleOPFinal extends LinearOpMode {
         //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
         //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
         motor1.setPower(x);
-        motor2.setPower(((-.5) * x) - ((sqrt(3)/(double)2) * y));
-        motor3.setPower(((-.5) * x) + ((sqrt(3)/(double)2) * y));
+        motor2.setPower(((-.5) * x) - ((sqrt(3)/2.0) * y));
+        motor3.setPower(((-.5) * x) + ((sqrt(3)/2.0) * y));
     }
 
     private void turnOffMotors()
@@ -192,9 +192,14 @@ public class teleOPFinal extends LinearOpMode {
 
     private void turn(double speed)
     {
-        motor1.setPower(speed/-2);
-        motor3.setPower(speed/-2);
-        motor2.setPower(speed/-2);
+        double divisor = 2;
+        // of the bumper is being held than make the robot turn slower
+        if (gamepad1.left_bumper) {
+            divisor = 5;
+        }
+        motor1.setPower(-speed/divisor);
+        motor3.setPower(-speed/divisor);
+        motor2.setPower(-speed/divisor);
     }
     
 }
