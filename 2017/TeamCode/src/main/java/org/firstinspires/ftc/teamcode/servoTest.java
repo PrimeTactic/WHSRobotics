@@ -127,7 +127,7 @@ public class servoTest extends LinearOpMode {
             }
             else if(gamepad1.b) // middle arm position
             {
-                armServo.setPosition(.5);
+                armServo.setPosition(.4);
             }
             else if(gamepad1.y)
             {
@@ -138,8 +138,8 @@ public class servoTest extends LinearOpMode {
                 // toggles if the arm is clamping every time x is pressed
                 isClamping = !isClamping;
                 if (isClamping) {
-                    rightClampServo.setPosition(0);
-                    leftClampServo.setPosition(0);
+                    rightClampServo.setPosition(.3);
+                    leftClampServo.setPosition(.3);
                 }
                 else {
                     rightClampServo.setPosition(.5);
