@@ -67,7 +67,7 @@ public class teleOPFinal extends LinearOpMode {
     private Servo leftClampServo;
     private Servo rightClampServo;
     int cooldown = 1000;
-    private boolean isClamping = true;
+    private boolean isClamped = true;
     private double row1Position = 0.2;
     private double row2Position = 0.4;
     private double row3Position = 0.6;
@@ -129,15 +129,23 @@ public class teleOPFinal extends LinearOpMode {
             {
                 armServo.setPosition(0);
             }
+            else if(gamepad1.dpad_down)
+            {
+                lowerArm(armServo.getPosition());
+            }
+            else if(gamepad1.dpad_up)
+            {
+                liftArm(armServo.getPosition());
+            }
 
             if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
                 // toggles if the arm is clamping every time x is pressed
                 cooldown = 1000; // reset cooldown
-                isClamping = !isClamping;
-                if (isClamping) {
-                    rightClampServo.setPosition(.3);
-                    leftClampServo.setPosition(.3);
+                isClamped = !isClamped;
+                if (isClamped) {
+                    rightClampServo.setPosition(0);
+                    leftClampServo.setPosition(0);
                 }
                 else {
                     rightClampServo.setPosition(.5);
@@ -146,6 +154,18 @@ public class teleOPFinal extends LinearOpMode {
             }
             else if (cooldown > 0) {
                 cooldown--;
+            }
+            else if(gamepad1.dpad_down || gamepad1.dpad_right )
+            {
+                if(gamepad1.dpad_right)
+                {
+                    rightClampServo.setPosition(.4);
+                    leftClampServo.setPosition(.4);
+                }
+                else if(gamepad1.dpad_left)
+                {
+                    closeClamp(rightClampServo.getPosition());
+                }
             }
 
             // Show the elapsed game time and wheel power
@@ -205,6 +225,32 @@ public class teleOPFinal extends LinearOpMode {
         motor1.setPower(-speed/divisor);
         motor3.setPower(-speed/divisor);
         motor2.setPower(-speed/divisor);
+    }
+
+    private void closeClamp(double currentPosition)
+    {
+        double newPosition = currentPosition + .0005;
+        rightClampServo.setPosition(newPosition);
+        leftClampServo.setPosition(newPosition);
+    }
+
+    private  void openClamp(double currentPosition)
+    {
+        double newPosition = currentPosition - .0005;
+        rightClampServo.setPosition(newPosition);
+        leftClampServo.setPosition(newPosition);
+    }
+
+    private void liftArm(double currentPosition)
+    {
+        double newPosition = currentPosition - .001;
+        armServo.setPosition(newPosition);
+    }
+
+    private  void lowerArm(double currentPosition)
+    {
+        double newPosition = currentPosition + .001;
+        armServo.setPosition(newPosition);
     }
     
 }

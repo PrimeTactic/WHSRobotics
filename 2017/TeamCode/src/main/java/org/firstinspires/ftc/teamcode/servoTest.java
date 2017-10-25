@@ -138,8 +138,8 @@ public class servoTest extends LinearOpMode {
                 // toggles if the arm is clamping every time x is pressed
                 isClamping = !isClamping;
                 if (isClamping) {
-                    rightClampServo.setPosition(.3);
-                    leftClampServo.setPosition(.3);
+                    rightClampServo.setPosition(0);
+                    leftClampServo.setPosition(0);
                 }
                 else {
                     rightClampServo.setPosition(.5);
