@@ -41,6 +41,7 @@ import com.vuforia.Vuforia;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -137,10 +138,8 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
          */
 
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        relicTrackables.get(0).setName("RelicRecovery");
-
-        VuforiaTrackableDefaultListener wheels =(VuforiaTrackableDefaultListener) relicTrackables.get(0).getListener();
-
+        VuforiaTrackable tempRelicTrackable = relicTrackables.get(0);
+        tempRelicTrackable.setName("RelicRecovery");
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
@@ -157,29 +156,29 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            for(VuforiaTrackable beac: relicTrackables){
+            RelicRecoveryVuMark vumarkImageTracker = RelicRecoveryVuMark.from(tempRelicTrackable);
 
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) beac.getListener()).getPose();
+            OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) tempRelicTrackable.getListener()).getPose();
 
-                if(pose != null){
-                    VectorF translation = pose.getTranslation();
+            if(pose != null){
+                VectorF translation = pose.getTranslation();
 
-                    telemetry.addData(beac.getName() + "-Translation", translation);
+                telemetry.addData(tempRelicTrackable.getName() + "-Translation", translation);
 
-                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
+                double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
 
-                    telemetry.addData(beac.getName() + "-degrees", degreesToTurn);
+                telemetry.addData(tempRelicTrackable.getName() + "-degrees", degreesToTurn);
 
-                    //find out which array value is x, y, and z
-                    float zero = translation.get(0);
-                    float one = translation.get(1);
-                    float two = translation.get(2);
-                    telemetry.addData(beac.getName() + "x", zero);
-                    telemetry.addData(beac.getName() + "y", one);
-                    telemetry.addData(beac.getName() + "z", two);
+                //find out which array value is x, y, and z
+                float zero = translation.get(0);
+                float one = translation.get(1);
+                float two = translation.get(2);
+                telemetry.addData(tempRelicTrackable.getName() + "x", zero);
+                telemetry.addData(tempRelicTrackable.getName() + "y", one);
+                telemetry.addData(tempRelicTrackable.getName() + "z", two);
 
-                }
             }
+
             telemetry.update();
 
         }
