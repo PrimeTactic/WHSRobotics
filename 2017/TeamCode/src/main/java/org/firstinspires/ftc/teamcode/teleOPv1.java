@@ -29,14 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 
@@ -59,9 +58,9 @@ import static java.lang.Math.sqrt;
  */
 
 // this is a test comment
-@TeleOp(name="teleOPFinal", group="Linear Opmode")
+@TeleOp(name="teleOPv1", group="Linear Opmode")
 //@Disabled
-public class teleOPFinal extends LinearOpMode {
+public class teleOPv1 extends LinearOpMode {
     
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -76,7 +75,6 @@ public class teleOPFinal extends LinearOpMode {
     private double row1Position = 0.2;
     private double row2Position = 0.4;
     private double row3Position = 0.6;
-    private BNO055IMU gyro;
 
     @Override
     public void runOpMode() {
@@ -89,23 +87,6 @@ public class teleOPFinal extends LinearOpMode {
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
         motor3 = hardwareMap.get(DcMotor.class, "motor3");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = false;
-        parameters.loggingTag          = "gyro";
-        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        gyro = hardwareMap.get(BNO055IMU.class, "gyro");
-        gyro.initialize(parameters);
 
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
@@ -194,34 +175,23 @@ public class teleOPFinal extends LinearOpMode {
         telemetry.addData("motor 2 power        : " , motor2.getPower());
         telemetry.addData("motor 3 power        : " , motor3.getPower());
 
-        AngularVelocity v = gyro.getAngularVelocity();
-        telemetry.addData("gyro unit            : " , v.unit);
-        telemetry.addData("gyro velocity x      : " , v.xRotationRate);
-        telemetry.addData("gyro velocity y      : " , v.yRotationRate);
-
         telemetry.update();
     }
 
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        double scale = 1;
+        //double power1 = x;
+        //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
+        //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
+        double divisor = 1;
         // for precise movement
         if (gamepad1.right_bumper) {
-            scale = 2;
+            divisor = 2;
         }
-
-        double power1 = x;
-        double power2 = ((-.5) * x) - (sqrt(3)/2) * y;
-        double power3 = ((-.5) * x) + (sqrt(3)/2) * y;
-
-        AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate;
-        float v_y = v.yRotationRate;
-
-        motor1.setPower(x / scale);
-        motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / scale);
-        motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / scale);
+        motor1.setPower(x / divisor);
+        motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / divisor);
+        motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / divisor);
     }
 
     private void turnOffMotors()
