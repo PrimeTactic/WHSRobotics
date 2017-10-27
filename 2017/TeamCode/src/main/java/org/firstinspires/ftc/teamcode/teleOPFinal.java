@@ -245,11 +245,11 @@ public class teleOPFinal extends LinearOpMode {
         double correctionValue = 0;
         if (Math.abs(v_x) > correctionZoneDegrees)
         {
-            correctionValue = (double)(v_x / 100.0);
+            correctionValue = (double)(v_x / 200.0);
         }
         
         double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) + correctionValue;
+        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
         double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) - correctionValue;
 
         
