@@ -84,8 +84,13 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia Sample";
     OpenGLMatrix lastLocation = null;
+
     private long debugSleep = 800; // sleep time in milliseconds for debugging
+
+    //created variable to only assign one value to int columntoPlaceBlock so that the phone does not accidently
     private Boolean hasSeenPicture = false;
+
+    //created variable to have an int that represents which column the block should be placed in during autonomous
     private int columntoPlaceBlock;
 
     /**
