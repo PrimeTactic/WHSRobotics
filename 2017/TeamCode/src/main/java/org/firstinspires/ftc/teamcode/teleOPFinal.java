@@ -249,8 +249,8 @@ public class teleOPFinal extends LinearOpMode {
         }
         
         double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
-        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) + correctionValue;
+        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) + correctionValue;
+        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) - correctionValue;
 
         
         
@@ -260,6 +260,7 @@ public class teleOPFinal extends LinearOpMode {
 
         telemetry.addData("motor 3 power" , power2);
         telemetry.addData("motor 2 power" , power3);
+        telemetry.addData("correction value" , correctionValue);
 
     }
 
