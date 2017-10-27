@@ -83,10 +83,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class vuforiaImageTrackingTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia Sample";
-
     OpenGLMatrix lastLocation = null;
-
     private long debugSleep = 800; // sleep time in milliseconds for debugging
+    private Boolean hasSeenPicture = false;
+    private int columntoPlaceBlock;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -149,38 +149,53 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
         /** Start tracking the data sets we care about. */
         relicTrackables.activate();
 
-
-        // get angles and distance from target
-        //VectorF angles = anglesFromTarget(wheels);
-        //VectorF trans = navOffWall(wheels.getPose().getTranslation(), Math.toDegrees(angles.get(0)) - 90, new VectorF(500,0,0));
-
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
 
             RelicRecoveryVuMark vumarkImageTracker = RelicRecoveryVuMark.from(tempRelicTrackable);
 
-            OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) tempRelicTrackable.getListener()).getPose();
+            if(vumarkImageTracker != RelicRecoveryVuMark.UNKNOWN)
+            {
+                hasSeenPicture = true;
 
-            if(pose != null){
-                VectorF translation = pose.getTranslation();
+                if (!hasSeenPicture)
+                {
+                    if(vumarkImageTracker == RelicRecoveryVuMark.LEFT)
+                    {
+                        columntoPlaceBlock = 1;
+                    }else if(vumarkImageTracker == RelicRecoveryVuMark.CENTER)
+                    {
+                        columntoPlaceBlock = 2;
+                    }else if(vumarkImageTracker == RelicRecoveryVuMark.RIGHT)
+                    {
+                        columntoPlaceBlock = 3;
+                    }
+                }
 
-                telemetry.addData(tempRelicTrackable.getName() + "-Translation", translation);
+                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) tempRelicTrackable.getListener()).getPose();
 
-                double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
+                if (pose != null) {
+                    VectorF translation = pose.getTranslation();
 
-                telemetry.addData(tempRelicTrackable.getName() + "-degrees", degreesToTurn);
+                    telemetry.addData(tempRelicTrackable.getName() + "-Translation", translation);
 
-                //find out which array value is x, y, and z
-                float zero = translation.get(0);
-                float one = translation.get(1);
-                float two = translation.get(2);
-                telemetry.addData(tempRelicTrackable.getName() + "x", zero);
-                telemetry.addData(tempRelicTrackable.getName() + "y", one);
-                telemetry.addData(tempRelicTrackable.getName() + "z", two);
+                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
 
+                    telemetry.addData(tempRelicTrackable.getName() + "-degrees", degreesToTurn);
+
+                    //find out which array value is x, y, and z
+                    float zero = translation.get(0);
+                    float one = translation.get(1);
+                    float two = translation.get(2);
+                    telemetry.addData(tempRelicTrackable.getName() + "x", zero);
+                    telemetry.addData(tempRelicTrackable.getName() + "y", one);
+                    telemetry.addData(tempRelicTrackable.getName() + "z", two);
+
+                }
             }
 
+            telemetry.addData("column to place block in", columntoPlaceBlock);
             telemetry.update();
-
         }
     }
 
