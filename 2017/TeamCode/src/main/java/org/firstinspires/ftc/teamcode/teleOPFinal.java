@@ -95,7 +95,7 @@ public class teleOPFinal extends LinearOpMode {
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = false;
@@ -224,20 +224,29 @@ public class teleOPFinal extends LinearOpMode {
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        // double scale = 1;
+        double scale = 1;
         // for precise movement
         //if (gamepad1.right_bumper) {
-        //    scale = 2;
+        //    scale = 0.5;
         //}
 
-        //double power1 = x;
-        double power2 = ((-.5) * x) - (sqrt(3)/2) * y;
-        double power3 = ((-.5) * x) + (sqrt(3)/2) * y;
-
+        
+        final float correctionZoneDegrees = 5;
         AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate;
+        float v_x = v.xRotationRate; // positive is clockwise
+        double correctionValue = 0;
+        if (Math.abs(v_x) > correctionZoneDegrees)
+        {
+            correctionValue = (double)(v_x / 100.0);
+        }
+        
+        double power1 = scale * x;
+        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
+        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) + correctionValue;
 
-        motor1.setPower(x);
+        
+        
+        motor1.setPower(power1);
         motor2.setPower(power2);
         motor3.setPower(power3);
 
