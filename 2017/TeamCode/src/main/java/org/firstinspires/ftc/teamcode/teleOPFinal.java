@@ -78,6 +78,7 @@ public class teleOPFinal extends LinearOpMode {
     private double row3Position = 0.6;
     private BNO055IMU gyro;
 
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -178,7 +179,6 @@ public class teleOPFinal extends LinearOpMode {
     }
 
     public void updateTelemetry(){
-        //[dont need to make variables for servo values (redundent)]
         //double armServoValue = armServo.getPosition();
         //double leftClampValue = leftClampServo.getPosition();
         //double rightClampValue = rightClampServo.getPosition();
@@ -190,14 +190,9 @@ public class teleOPFinal extends LinearOpMode {
         telemetry.addData("a button             : " , gamepad1.a);
         telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
         telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
-        telemetry.addData("motor 1 power        : " , motor1.getPower());
-        telemetry.addData("motor 2 power        : " , motor2.getPower());
-        telemetry.addData("motor 3 power        : " , motor3.getPower());
-
-        //AngularVelocity v = gyro.getAngularVelocity();
-        //telemetry.addData("gyro unit            : " , v.unit);
-        //telemetry.addData("gyro velocity x      : " , v.xRotationRate);
-        //telemetry.addData("gyro velocity y      : " , v.yRotationRate);
+        AngularVelocity v = gyro.getAngularVelocity();
+        float v_x = v.xRotationRate;
+        telemetry.addData("x rotation rate : " , v_x);
 
         telemetry.update();
     }
@@ -216,20 +211,19 @@ public class teleOPFinal extends LinearOpMode {
         //}
 
         //double power1 = x;
-        //double power2 = ((-.5) * x) - (sqrt(3)/2) * y;
-        //double power3 = ((-.5) * x) + (sqrt(3)/2) * y;
+        double power2 = ((-.5) * x) - (sqrt(3)/2) * y;
+        double power3 = ((-.5) * x) + (sqrt(3)/2) * y;
 
-        //AngularVelocity v = gyro.getAngularVelocity();
-        //float v_x = v.xRotationRate;
-        //float v_y = v.yRotationRate;
-
-        //motor1.setPower(x / scale);
-        //motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / scale);
-        //motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / scale);
         AngularVelocity v = gyro.getAngularVelocity();
+        float v_x = v.xRotationRate;
+
         motor1.setPower(x);
-        motor2.setPower(-(y+sigmoid( v.xRotationRate)));
-        motor3.setPower(  y+sigmoid(-v.xRotationRate));
+        motor2.setPower(power2);
+        motor3.setPower(power3);
+
+        telemetry.addData("motor 3 power" , power2);
+        telemetry.addData("motor 2 power" , power3);
+
     }
 
     private void turnOffMotors()
