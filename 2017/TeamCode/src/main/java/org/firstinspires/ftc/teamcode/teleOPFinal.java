@@ -137,6 +137,14 @@ public class teleOPFinal extends LinearOpMode {
             {
                 liftArm(armServo.getPosition());
             }
+            else if(gamepad1.left_trigger > .5)
+            {
+                drive(-1, 0); //drive left
+            }
+            else if(gamepad1.right_trigger > .5)
+            {
+                drive(1, 0); //drive right
+            }
 
             if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
