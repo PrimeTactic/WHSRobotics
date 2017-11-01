@@ -77,6 +77,8 @@ public class teleOPFinal extends LinearOpMode {
     private double row2Position = 0.4;
     private double row3Position = 0.6;
     private BNO055IMU gyro;
+    final private double OPENCLAMPPOSITION = 0;
+    final private double CLOSECLAMPPOSITION = .5;
 
 
     @Override
@@ -177,12 +179,10 @@ public class teleOPFinal extends LinearOpMode {
                 cooldown = 1000; // reset cooldown
                 isClamped = !isClamped;
                 if (isClamped) {
-                    rightClampServo.setPosition(0);
-                    leftClampServo.setPosition(0);
+                    setClampPosition(OPENCLAMPPOSITION);
                 }
                 else {
-                    rightClampServo.setPosition(.5);
-                    leftClampServo.setPosition(.5);
+                    setClampPosition(CLOSECLAMPPOSITION);
                 }
             }
             else if (cooldown > 0) {
@@ -213,9 +213,11 @@ public class teleOPFinal extends LinearOpMode {
         //boolean aButton = gamepad1.a;
         telemetry.addData("Status", "Run Time   : " + runtime.toString());
         telemetry.addData("Arm servo position   : " , armServo.getPosition());
-        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
         telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("a button             : " , gamepad1.a);
+        telemetry.addData("left motor power", motor2.getPower());
+        telemetry.addData("right motor power", motor3.getPower());
+        telemetry.addData("left encoder", motor2.getCurrentPosition());
+        telemetry.addData("right encoder", motor3.getCurrentPosition());
         telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
         telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
         AngularVelocity v = gyro.getAngularVelocity();
@@ -281,6 +283,12 @@ public class teleOPFinal extends LinearOpMode {
         motor1.setPower(-speed/divisor);
         motor3.setPower(-speed/divisor);
         motor2.setPower(-speed/divisor);
+    }
+
+    private void setClampPosition(double newClampPosition)
+    {
+        rightClampServo.setPosition(newClampPosition);
+        leftClampServo.setPosition(newClampPosition);
     }
 
     private void closeClamp(double currentPosition)

@@ -127,11 +127,13 @@ public class cristhiansControls extends LinearOpMode {
 
         telemetry.addData("Status", "Run Time   : " + runtime.toString());
         telemetry.addData("Arm servo position   : " , armServo.getPosition());
-        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
         telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("a button             : " , gamepad1.a);
         telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
         telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
+        telemetry.addData("left motor power", motor2.getPower());
+        telemetry.addData("right motor power", motor3.getPower());
+        telemetry.addData("left encoder", motor2.getCurrentPosition());
+        telemetry.addData("right encoder", motor3.getCurrentPosition());
         telemetry.update();
     }
     public double sigmoid(double x) {
