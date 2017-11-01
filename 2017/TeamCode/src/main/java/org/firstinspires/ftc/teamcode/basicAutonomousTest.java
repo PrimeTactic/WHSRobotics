@@ -107,6 +107,10 @@ public class basicAutonomousTest extends LinearOpMode {
     private double row2Position = 0.4;
     private double row3Position = 0.6;
     private BNO055IMU gyro;
+    final private double OPENCLAMPPOSITION = 0;
+    final private double CLOSECLAMPPOSITION = .5;
+    final private double AUTONOMOUSDRIVETIME = 1.2;
+    final private double LIFTEDARMPOSITION = .6;
 
 
     @Override
@@ -156,11 +160,34 @@ public class basicAutonomousTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        double elapsedTime;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-           
+            elapsedTime = runtime.time();
+            if (elapsedTime < 2)
+            {
+                setClampPosition(CLOSECLAMPPOSITION);
+            }
+            else if (elapsedTime < 4) {
+                armServo.setPosition(LIFTEDARMPOSITION);
+            }
+            else if(elapsedTime < 5.2)
+            {
+                drive(0, 1);
+            }
+            else if (elapsedTime < 5.7)
+            {
+                setClampPosition(OPENCLAMPPOSITION);
+            }
+            else if (elapsedTime < 7.7)
+            {
+                drive(0, 0.5);
+            }
+            else {
+                turnOffMotors();
+            }
             updateTelemetry();
         }
     }
@@ -171,15 +198,8 @@ public class basicAutonomousTest extends LinearOpMode {
         //double rightClampValue = rightClampServo.getPosition();
         //boolean aButton = gamepad1.a;
         telemetry.addData("Status", "Run Time   : " + runtime.toString());
-        telemetry.addData("Arm servo position   : " , armServo.getPosition());
-        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
-        telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("a button             : " , gamepad1.a);
-        telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
-        telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
-        AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate;
-        telemetry.addData("x rotation rate : " , v_x);
+        telemetry.addData("left motor power", motor2.getPower());
+        telemetry.addData("right motor power", motor3.getPower());
 
         telemetry.update();
     }
@@ -208,18 +228,14 @@ public class basicAutonomousTest extends LinearOpMode {
         }
 
         double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
-        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) - correctionValue;
+        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)); //- correctionValue;
+        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)); //- correctionValue;
 
 
 
         motor1.setPower(power1);
         motor2.setPower(power2);
         motor3.setPower(power3);
-
-        telemetry.addData("motor 3 power" , power2);
-        telemetry.addData("motor 2 power" , power3);
-        telemetry.addData("correction value" , correctionValue);
 
     }
 
@@ -240,6 +256,12 @@ public class basicAutonomousTest extends LinearOpMode {
         motor1.setPower(-speed/divisor);
         motor3.setPower(-speed/divisor);
         motor2.setPower(-speed/divisor);
+    }
+
+    private void setClampPosition(double newClampPosition)
+    {
+        rightClampServo.setPosition(newClampPosition);
+        leftClampServo.setPosition(newClampPosition);
     }
 
     private void closeClamp(double currentPosition)
