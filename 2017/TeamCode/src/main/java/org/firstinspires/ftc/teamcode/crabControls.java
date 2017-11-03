@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 
 import static java.lang.Math.sqrt;
 
-@TeleOp(name="Cristhian_Controls", group="Linear Opmode")
+@TeleOp(name="Crab_Controls", group="Linear Opmode")
 
-public class cristhiansControls extends LinearOpMode {
+public class crabControls extends LinearOpMode {
     //teleOPFinal
 
     // Declare OpMode members.
@@ -37,7 +32,6 @@ public class cristhiansControls extends LinearOpMode {
     public void runOpMode() {
 
         telemetry.addData("Status", "Initialized");
-
         telemetry.update();
 
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
@@ -69,7 +63,7 @@ public class cristhiansControls extends LinearOpMode {
             if (gamepad1.atRest()) {
                 turnOffMotors();
             } else {
-                drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
+                driveStraight(-gamepad1.right_stick_y);
                 turn(gamepad1.left_stick_x);
             }
 
@@ -171,6 +165,27 @@ public class cristhiansControls extends LinearOpMode {
         motor1.setPower(power1);
         motor2.setPower(power2);
         motor3.setPower(power3);
+    }
+
+    public  void driveStraight(double y)
+    {
+        if (y > 0)
+        {
+            y = 1;
+        }
+        else if (y < 0)
+        {
+            y = -1;
+        }
+
+        motor2.setPower(-y);
+        motor3.setPower(y);
+    }
+
+    public  void driveBackward(double y)
+    {
+        motor2.setPower(-1);
+        motor3.setPower(1);
     }
 
     private void turnOffMotors()

@@ -1,42 +1,43 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/*
+Copyright (c) 2016 Robert Atkinson
 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted (subject to the limitations in the disclaimer below) provided that
+the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list
+of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+Neither the name of Robert Atkinson nor the names of his contributors may be used to
+endorse or promote products derived from this software without specific prior
+written permission.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESSFOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 
@@ -49,20 +50,17 @@ import static java.lang.Math.sqrt;
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- * http://robocup.mi.fu-berlin.de/buch/omnidrive.pdf
- * https://stackoverflow.com/questions/3748037/how-to-control-a-kiwi-drive-robot
  */
 
-// this is a test comment
-@TeleOp(name="teleOPFinal", group="Linear Opmode")
-//@Disabled
-public class teleOPFinal extends LinearOpMode {
-    
+@Autonomous(name="basicAutonomousTestWithEncoder", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+
+public class basicAutonomousTestWithEncoder extends LinearOpMode {
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1; // back motor
@@ -79,6 +77,8 @@ public class teleOPFinal extends LinearOpMode {
     private BNO055IMU gyro;
     final private double OPENCLAMPPOSITION = 0;
     final private double CLOSECLAMPPOSITION = .5;
+    final private double AUTONOMOUSDRIVETIME = 1.2;
+    final private double LIFTEDARMPOSITION = .6;
 
 
     @Override
@@ -128,80 +128,34 @@ public class teleOPFinal extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        double elapsedTime;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-            // on gamepad movement (controls robot wheel movment)
-            if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            elapsedTime = runtime.time();
+            if (elapsedTime < 2)
             {
+                setClampPosition(CLOSECLAMPPOSITION);
+            }
+            else if (elapsedTime < 4) {
+                armServo.setPosition(LIFTEDARMPOSITION);
+            }
+            else if(elapsedTime < 5.2)
+            {
+                drive(0, 1);
+            }
+            else if (elapsedTime < 5.7)
+            {
+                setClampPosition(OPENCLAMPPOSITION);
+            }
+            else if (elapsedTime < 7.7)
+            {
+                drive(0, 0.5);
+            }
+            else {
                 turnOffMotors();
             }
-            else
-            {
-                drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
-                turn(gamepad1.left_stick_x);
-            }
-
-            // on button presses (controls arm movement)
-            if (gamepad1.a)
-            {
-                armServo.setPosition(.8);
-            }
-            else if (gamepad1.b) // middle arm position
-            {
-                armServo.setPosition(.4);
-            }
-            else if (gamepad1.y)
-            {
-                armServo.setPosition(0);
-            }
-            else if(gamepad1.dpad_down)
-            {
-                lowerArm(armServo.getPosition());
-            }
-            else if(gamepad1.dpad_up)
-            {
-                liftArm(armServo.getPosition());
-            }
-            else if(gamepad1.left_trigger > .5)
-            {
-                drive(-1, 0); //drive left
-            }
-            else if(gamepad1.right_trigger > .5)
-            {
-                drive(1, 0); //drive right
-            }
-
-            if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
-            {
-                // toggles if the arm is clamping every time x is pressed
-                cooldown = 1000; // reset cooldown
-                isClamped = !isClamped;
-                if (isClamped) {
-                    setClampPosition(OPENCLAMPPOSITION);
-                }
-                else {
-                    setClampPosition(CLOSECLAMPPOSITION);
-                }
-            }
-            else if (cooldown > 0) {
-                cooldown--;
-            }
-            else if(gamepad1.dpad_down || gamepad1.dpad_right )
-            {
-                if(gamepad1.dpad_right)
-                {
-                    rightClampServo.setPosition(.4);
-                    leftClampServo.setPosition(.4);
-                }
-                else if(gamepad1.dpad_left)
-                {
-                    closeClamp(rightClampServo.getPosition());
-                }
-            }
-
-            // Show the elapsed game time and wheel power
             updateTelemetry();
         }
     }
@@ -212,18 +166,8 @@ public class teleOPFinal extends LinearOpMode {
         //double rightClampValue = rightClampServo.getPosition();
         //boolean aButton = gamepad1.a;
         telemetry.addData("Status", "Run Time   : " + runtime.toString());
-        telemetry.addData("Arm servo position   : " , armServo.getPosition());
-        telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
         telemetry.addData("left motor power", motor2.getPower());
         telemetry.addData("right motor power", motor3.getPower());
-        telemetry.addData("left encoder", motor2.getCurrentPosition());
-        telemetry.addData("right encoder", motor3.getCurrentPosition());
-        telemetry.addData("front motor power", motor1.getPower());
-        telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
-        telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
-        AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate;
-        telemetry.addData("x rotation rate : " , v_x);
 
         telemetry.update();
     }
@@ -241,7 +185,7 @@ public class teleOPFinal extends LinearOpMode {
         //    scale = 0.5;
         //}
 
-        
+
         final float correctionZoneDegrees = 5;
         AngularVelocity v = gyro.getAngularVelocity();
         float v_x = v.xRotationRate; // positive is clockwise
@@ -250,20 +194,16 @@ public class teleOPFinal extends LinearOpMode {
         {
             correctionValue = (double)(v_x / 200.0);
         }
-        
-        double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
-        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) - correctionValue;
 
-        
-        
+        double power1 = scale * x;
+        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)); //- correctionValue;
+        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)); //- correctionValue;
+
+
+
         motor1.setPower(power1);
         motor2.setPower(power2);
         motor3.setPower(power3);
-
-        telemetry.addData("motor 3 power" , power2);
-        telemetry.addData("motor 2 power" , power3);
-        telemetry.addData("correction value" , correctionValue);
 
     }
 
@@ -317,5 +257,5 @@ public class teleOPFinal extends LinearOpMode {
         double newPosition = currentPosition + .001;
         armServo.setPosition(newPosition);
     }
-    
+
 }
