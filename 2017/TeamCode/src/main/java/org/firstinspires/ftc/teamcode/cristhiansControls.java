@@ -27,6 +27,7 @@ public class cristhiansControls extends LinearOpMode {
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    final double armLiftChange = 0.0015;
     final double cooldown = 0.5;
     private boolean isClamped = true;
     private double row1Position = 0.2;
@@ -208,13 +209,13 @@ public class cristhiansControls extends LinearOpMode {
 
     private void liftArm(double currentPosition)
     {
-        double newPosition = currentPosition - .001;
+        double newPosition = currentPosition - armLiftChange;
         armServo.setPosition(newPosition);
     }
 
     private  void lowerArm(double currentPosition)
     {
-        double newPosition = currentPosition + .001;
+        double newPosition = currentPosition + armLiftChange;
         armServo.setPosition(newPosition);
     }
 
