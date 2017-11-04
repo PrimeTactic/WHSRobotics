@@ -89,9 +89,9 @@ import static java.lang.Math.sqrt;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="basicAutonomousTest", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@Autonomous(name="redStrightAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
-public class basicAutonomousTest extends LinearOpMode {
+public class redStrightAutonomousFinal extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -114,12 +114,10 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double PHASEONE = 2; // clamp block
     final private double PHASETWO = PHASEONE + 2; //lift arm
     final private double PHASETHREE = PHASETWO + 2.4; // drive forward
-    final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motor
-    final private double PHASEFOUR = PHASETHREEHALF + .5; // open clamp
-    final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
-    final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
-    final private double PHASESIX = PHASEFIVEHALF + .3; //disabled turn
-    //turns off all motors at end
+    final private double PHASEFOUR = PHASETHREE + .5; //
+    final private double PHASEFIVE = PHASEFOUR + 2;
+    final private double PHASESIX = PHASEFIVE + .1;
+    final private double PHASESEVEN = PHASESIX + .3;
 
 
     @Override
@@ -182,13 +180,9 @@ public class basicAutonomousTest extends LinearOpMode {
             else if (elapsedTime < PHASETWO) {
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
-            else if(elapsedTime < PHASETHREE)
+            else if(elapsedTime < PHASETHREE) // full speed 5.2
             {
                 drive(0, .5);
-            }
-            else if(elapsedTime < PHASETHREEHALF)
-            {
-                turnOffMotors();
             }
             else if (elapsedTime < PHASEFOUR)
             {
@@ -198,13 +192,13 @@ public class basicAutonomousTest extends LinearOpMode {
             {
                 drive(0, 0.5);
             }
-            else if (elapsedTime < PHASEFIVEHALF)
+            else if (elapsedTime < PHASESIX)
             {
                 turnOffMotors();
             }
-            else if (elapsedTime < PHASESIX)
+            else if (elapsedTime < PHASESEVEN)
             {
-                turn(.5);
+                turn(-.5);
             }
             else {
                 turnOffMotors();
