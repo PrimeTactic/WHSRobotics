@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -56,7 +57,7 @@ import static java.lang.Math.sqrt;
 
 // this is a test comment
 @TeleOp(name="kiwiDrive", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class kiwiDrive extends LinearOpMode {
     
     // Declare OpMode members.
