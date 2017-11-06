@@ -90,7 +90,7 @@ import static java.lang.Math.sqrt;
  */
 
 @Autonomous(name="redStrightAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-
+@Disabled
 public class redStrightAutonomousFinal extends LinearOpMode {
 
     // Declare OpMode members.
@@ -118,6 +118,8 @@ public class redStrightAutonomousFinal extends LinearOpMode {
     final private double PHASEFIVE = PHASEFOUR + 2;
     final private double PHASESIX = PHASEFIVE + .1;
     final private double PHASESEVEN = PHASESIX + .3;
+    final private double PHASEEIGHT = PHASESEVEN + .2; // back up
+    final private double PHASEEIGHTHALF = PHASEEIGHT + .1; // turn off motors
 
 
     @Override
