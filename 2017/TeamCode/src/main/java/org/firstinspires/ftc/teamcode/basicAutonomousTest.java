@@ -119,6 +119,8 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
     final private double PHASESIX = PHASEFIVEHALF + .3; //disabled turn
+    final private double PHASESEVEN = PHASESIX + .2; // back up
+    final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
     //turns off all motors at end
 
 
@@ -205,6 +207,14 @@ public class basicAutonomousTest extends LinearOpMode {
             else if (elapsedTime < PHASESIX)
             {
                 turn(.5);
+            }
+            else if (elapsedTime < PHASESEVEN)
+            {
+                drive(0,-.5);
+            }
+            else if (elapsedTime < PHASESEVENHALF)
+            {
+                turnOffMotors();
             }
             else {
                 turnOffMotors();

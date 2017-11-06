@@ -81,14 +81,16 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
 
     final private double PHASEONE = 2; // clamp block
     final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETHREE = PHASETWO + 2.4; // drive forward
+    final private double PHASETHREE = PHASETWO + 1.8; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motors
     final private double PHASEFOUR = PHASETHREEHALF + .5; // lowerarm
     final private double PHASEFIVE = PHASEFOUR + .75; // turn to face columns
-    final private double PHASESIX = PHASEFIVE + 1; // drive stright
+    final private double PHASESIX = PHASEFIVE + 2; // drive stright
     final private double PHASESIXHALF = PHASESIX + .1; // turn off motors
     final private double PHASESEVEN = PHASESIXHALF + .5; // open clamp
     final private double PHASEEIGHT = PHASESEVEN + .3; // turn
+    final private double PHASENINE = PHASEEIGHT + .5; // back up
+    final private double PHASENINEHALF = PHASENINE + .1; // turn off motors
 
     //turns off all motors at end
 
@@ -163,7 +165,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEFOUR)
             {
-                armServo.setPosition(.9);
+                armServo.setPosition(.7);
             }
             else if (elapsedTime < PHASEFIVE)
             {
@@ -183,7 +185,15 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEEIGHT)
             {
-                turn(.5);
+                turn(-.5);
+            }
+            else if (elapsedTime < PHASENINE)
+            {
+                drive(0,-.5);
+            }
+            else if (elapsedTime < PHASENINEHALF)
+            {
+                turnOffMotors();
             }
             else {
                 turnOffMotors();
