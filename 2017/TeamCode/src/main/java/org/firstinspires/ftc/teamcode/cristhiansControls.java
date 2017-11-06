@@ -124,8 +124,8 @@ public class cristhiansControls extends LinearOpMode {
             {
                 if (gamepad1.dpad_right)
                 {
-                    rightClampServo.setPosition(.4);
-                    leftClampServo.setPosition(.4);
+                    rightClampServo.setPosition(.35);
+                    leftClampServo.setPosition(.35);
                 }
                 else if (gamepad1.dpad_left)
                 {
