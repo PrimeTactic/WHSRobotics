@@ -55,7 +55,7 @@ import static java.lang.Math.sqrt;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="blueNintyDegreeAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@Autonomous(name="autonomousTestImproved", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class autonomousTestImproved extends LinearOpMode {
 
@@ -169,7 +169,23 @@ public class autonomousTestImproved extends LinearOpMode {
         while (opModeIsActive())
         {
             clamp(CLOSECLAMPPOSITION);
-            stop(JEWEL_PHASE[0]);
+            stop(2);
+            jewelServo.setPosition(1);
+            stop(2);
+            armServo.setPosition(.9);
+            stop(.5);
+            turn(-.3);
+            stop(.05);
+            turnOffMotors();
+            jewelServo.setPosition(.65);
+            stop(2);
+            jewelServo.setPosition(0);
+            stop(2);
+            //turn(.3);
+            //stop(.25);
+            //
+            break;
+
 
         }
     }
