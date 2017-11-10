@@ -39,8 +39,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-
 import static java.lang.Math.sqrt;
 
 
@@ -59,13 +57,14 @@ import static java.lang.Math.sqrt;
 
 @Autonomous(name="blueNintyDegreeAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
-public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
+public class autonomousTestImproved extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1; // back motor
     private DcMotor motor2; // left motor
     private DcMotor motor3; // right motor
+    private Servo jewelServo;
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
@@ -80,6 +79,8 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
     final private double LIFTEDARMPOSITION = .55;
 
     final private double[] JEWEL_PHASE = {
+        2.0, // close clamp
+        0.1, // lift clamp
         0.5, // arm falls
         0.5, // turn
         1.0, // bring arm up
@@ -145,6 +146,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
+        jewelServo = hardwareMap.get(Servo.class , "jewelServo");
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -154,6 +156,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         motor2.setDirection(DcMotor.Direction.FORWARD);
 
         armServo.setDirection(Servo.Direction.FORWARD);
+        jewelServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
 
@@ -165,58 +168,18 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-            elapsedTime = runtime.time();
-            if (elapsedTime < PHASEONE)
-            {
-                setClampPosition(CLOSECLAMPPOSITION);
-            }
-            else if (elapsedTime < PHASETWO) {
-                armServo.setPosition(LIFTEDARMPOSITION);
-            }
-            else if(elapsedTime < PHASETHREE)
-            {
-                drive(0, .5);
-            }
-            else if(elapsedTime < PHASETHREEHALF)
-            {
-                turnOffMotors();
-            }
-            else if (elapsedTime < PHASEFOUR)
-            {
-                armServo.setPosition(.7);
-            }
-            else if (elapsedTime < PHASEFIVE)
-            {
-                turn(-.5);
-            }
-            else if (elapsedTime < PHASESIX)
-            {
-                drive(0, .5);
-            }
-            else if (elapsedTime < PHASESIXHALF)
-            {
-                turnOffMotors();
-            }
-            else if (elapsedTime < PHASESEVEN)
-            {
-                setClampPosition(OPENCLAMPPOSITION);
-            }
-            else if (elapsedTime < PHASEEIGHT)
-            {
-                turn(-.5);
-            }
-            else if (elapsedTime < PHASENINE)
-            {
-                drive(0,-.5);
-            }
-            else if (elapsedTime < PHASENINEHALF)
-            {
-                turnOffMotors();
-            }
-            else {
-                turnOffMotors();
-            }
-            updateTelemetry();
+            clamp(CLOSECLAMPPOSITION);
+            stop(JEWEL_PHASE[0]);
+
+        }
+    }
+
+    public void stop(double seconds) {
+        double currentTime = runtime.time();
+        double totalTime = currentTime + seconds;
+
+        while(currentTime < totalTime) {
+            currentTime = runtime.time();
         }
     }
 
@@ -232,14 +195,10 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         telemetry.update();
     }
 
-    public double sigmoid(double x) {
-        return 1 / (1 + Math.exp(-x));
-    }
-
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        double scale = 1;
+
         // for precise movement
         //if (gamepad1.right_bumper) {
         //    scale = 0.5;
@@ -255,11 +214,9 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             //correctionValue = (double)(v_x / 200.0);
         //}
 
-        double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)); //- correctionValue;
-        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)); //- correctionValue;
-
-
+        double power1 = x;
+        double power2 = ((((-.5) * x) - (sqrt(3)/2) * y)); //- correctionValue;
+        double power3 = ((((-.5) * x) + (sqrt(3)/2) * y)); //- correctionValue;
 
         motor1.setPower(power1);
         motor2.setPower(power2);
@@ -276,46 +233,23 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
 
     private void turn(double speed)
     {
-        double divisor = 2;
-        // of the bumper is being held than make the robot turn slower
-        if (gamepad1.left_bumper) {
-            divisor = 4;
-        }
-        motor1.setPower(-speed/divisor);
-        motor3.setPower(-speed/divisor);
-        motor2.setPower(-speed/divisor);
+        motor1.setPower(-speed);
+        motor3.setPower(-speed);
+        motor2.setPower(-speed);
     }
 
-    private void setClampPosition(double newClampPosition)
+    // takes in a position from 0 (open all the way) to .5 (closed)
+    private void clamp(double position)
     {
-        rightClampServo.setPosition(newClampPosition);
-        leftClampServo.setPosition(newClampPosition);
+        rightClampServo.setPosition(position);
+        leftClampServo.setPosition(position);
     }
 
-    private void closeClamp(double currentPosition)
+    private void moveServo(Servo servo, double amount)
     {
-        double newPosition = currentPosition + .0005;
-        rightClampServo.setPosition(newPosition);
-        leftClampServo.setPosition(newPosition);
+        double targetPosition = servo.getPosition() + amount;
+        servo.setPosition(targetPosition);
     }
 
-    private  void openClamp(double currentPosition)
-    {
-        double newPosition = currentPosition - .0005;
-        rightClampServo.setPosition(newPosition);
-        leftClampServo.setPosition(newPosition);
-    }
-
-    private void liftArm(double currentPosition)
-    {
-        double newPosition = currentPosition - .001;
-        armServo.setPosition(newPosition);
-    }
-
-    private  void lowerArm(double currentPosition)
-    {
-        double newPosition = currentPosition + .001;
-        armServo.setPosition(newPosition);
-    }
 
 }
