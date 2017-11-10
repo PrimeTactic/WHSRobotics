@@ -166,25 +166,82 @@ public class autonomousTestImproved extends LinearOpMode {
         double elapsedTime;
 
         // run until the end of the match (driver presses STOP)
+        boolean test = true;
         while (opModeIsActive())
         {
-            clamp(CLOSECLAMPPOSITION);
-            stop(2);
-            jewelServo.setPosition(1);
-            stop(2);
-            armServo.setPosition(.9);
-            stop(.5);
-            turn(-.3);
-            stop(.05);
-            turnOffMotors();
-            jewelServo.setPosition(.65);
-            stop(2);
-            jewelServo.setPosition(0);
-            stop(2);
-            //turn(.3);
-            //stop(.25);
-            //
-            break;
+            if(test) {
+                clamp(CLOSECLAMPPOSITION);
+                stop(2);
+                jewelServo.setPosition(1);
+                stop(2);
+                armServo.setPosition(.9);
+                stop(.5);
+                turn(-.3);
+                stop(.05);
+                turnOffMotors();
+                jewelServo.setPosition(.65);
+                stop(2);
+                jewelServo.setPosition(0);
+                stop(2);
+                turn(.3);
+                stop(.05);
+                turnOffMotors();
+                test = false;
+                runtime.reset();
+            }
+
+            elapsedTime = runtime.time();
+            if (elapsedTime < PHASEONE)
+            {
+                setClampPosition(CLOSECLAMPPOSITION);
+            }
+            else if (elapsedTime < PHASETWO) {
+                armServo.setPosition(LIFTEDARMPOSITION);
+            }
+            else if(elapsedTime < PHASETHREE)
+            {
+                drive(0, .5);
+            }
+            else if(elapsedTime < PHASETHREEHALF)
+            {
+                turnOffMotors();
+            }
+            else if (elapsedTime < PHASEFOUR)
+            {
+                armServo.setPosition(.7);
+            }
+            else if (elapsedTime < PHASEFIVE)
+            {
+                turn(.5/2);
+            }
+            else if (elapsedTime < PHASESIX)
+            {
+                drive(0, .5);
+            }
+            else if (elapsedTime < PHASESIXHALF)
+            {
+                turnOffMotors();
+            }
+            else if (elapsedTime < PHASESEVEN)
+            {
+                setClampPosition(OPENCLAMPPOSITION);
+            }
+            else if (elapsedTime < PHASEEIGHT)
+            {
+                turn(.5/2);
+            }
+            else if (elapsedTime < PHASENINE)
+            {
+                drive(0,-.5);
+            }
+            else if (elapsedTime < PHASENINEHALF)
+            {
+                turnOffMotors();
+            }
+            else {
+                turnOffMotors();
+            }
+            updateTelemetry();
 
 
         }
@@ -265,6 +322,12 @@ public class autonomousTestImproved extends LinearOpMode {
     {
         double targetPosition = servo.getPosition() + amount;
         servo.setPosition(targetPosition);
+    }
+
+    private void setClampPosition(double newClampPosition)
+    {
+        rightClampServo.setPosition(newClampPosition);
+        leftClampServo.setPosition(newClampPosition);
     }
 
 
