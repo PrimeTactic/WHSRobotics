@@ -98,6 +98,7 @@ public class basicAutonomousTest extends LinearOpMode {
     private DcMotor motor1; // back motor
     private DcMotor motor2; // left motor
     private DcMotor motor3; // right motor
+    private Servo jewelServo;
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
@@ -133,8 +134,12 @@ public class basicAutonomousTest extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
-        motor3 = hardwareMap.get(DcMotor.class, "motor3");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
+        motor3 = hardwareMap.get(DcMotor.class, "motor3");
+        
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor2.setDirection(DcMotor.Direction.FORWARD);
+        motor3.setDirection(DcMotor.Direction.FORWARD);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -153,17 +158,12 @@ public class basicAutonomousTest extends LinearOpMode {
         gyro = hardwareMap.get(BNO055IMU.class, "gyro");
         gyro.initialize(parameters);
 
+        jewelServo = hardwareMap.get(Servo.class, "jewelServo");
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
 
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        motor1.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
-
+        jewelServo.setDirection(Servo.Direction.FORWARD);
         armServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
