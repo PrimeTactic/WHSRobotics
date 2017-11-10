@@ -78,7 +78,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained below.
  */
 
-@TeleOp(name="vuforiaImageTrackingTest", group ="LinearOpMode")
+@TeleOp(name="vumarkImageTrackingTest", group ="LinearOpMode")
 //@Disabled
 public class vuforiaImageTrackingTest extends LinearOpMode {
 
@@ -87,7 +87,7 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
 
     private long debugSleep = 800; // sleep time in milliseconds for debugging
 
-    //created variable to only assign one value to int columntoPlaceBlock so that the phone does not accidently
+    //created variable to only assign one value to int columntoPlaceBlock so that the phone does not accidentally see another vumark
     private Boolean hasSeenPicture = false;
 
     //created variable to have an int that represents which column the block should be placed in during autonomous

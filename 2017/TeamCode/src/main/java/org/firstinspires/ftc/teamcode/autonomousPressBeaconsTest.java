@@ -85,17 +85,17 @@ import java.util.Arrays;
  */
 
 @Autonomous(name="autonomousPressBeaconsTest", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-@Disabled
+//@Disabled
 public class autonomousPressBeaconsTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor collectorMotor;
+    /*private DcMotor collectorMotor;
     private DcMotor shooterMotor;
     private DcMotor leftMotor;
     private DcMotor rightMotor;
     private DcMotor frontMotor;
-    private DcMotor backMotor;
+    private DcMotor backMotor;*/
 
     private double powerAdjustment = 4;// power will be divided by this factor
 
@@ -123,7 +123,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        initMotors();
+        //initMotors();
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(com.qualcomm.ftcrobotcontroller.R.id.cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AdZOZEv/////AAAAGaqoHQLSt0TJrP23HiGwU8Mdqqts2/HFrn5wbhUmoa7zV76jXAPFEM1CQj+Ij86PNScilK4zkkGt6ckTicVLukBfaaw4+tb35Iq8Q7hDlVTgzszgoen+Pa9Um9yT7J6n6yac3PJbb66yYZggOuY4XWSOwBZwAaTIM++2rHVjzHvTsSrltICpyc1g8/UGrXmu78cSIoFV/AwmZrj+ZtKalyeHwKvLfvl/U0VuxDb/4EqjLinRrbragfSo42aCWp+TfDSqIncXn9bmwL6teZqW4LsC/Lvjldbg4tP8ZEK0UEm9stBcmNwi+51o32BHWaoN6g5+1Oy+C2B86O9BopLwTxWgJy3dfbI2foomi0aPb4ou";
@@ -153,12 +153,12 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         beacons.activate();
 
         //drive right until it finds the first picture
-        while (opModeIsActive() && legos.getRawPose() == null){
+        /*while (opModeIsActive() && legos.getRawPose() == null){
             frontMotor.setPower(.2);
             backMotor.setPower(.2);
         }
         frontMotor.setPower(0);
-        backMotor.setPower(0);
+        backMotor.setPower(0);*/
 
         lineUpWithBeacon(beacons.get(2));
         Debug("line up with beacon");
@@ -419,16 +419,16 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         sleep(debugSleep);
     }
 
-    private void turnOffMotors(){
+    /*private void turnOffMotors(){
 
         this.frontMotor.setPower(0);
         this.backMotor.setPower(0);
         this.rightMotor.setPower(0);
         this.leftMotor.setPower(0);
 
-    }
+    }*/
 
-    private void initMotors(){
+    /*private void initMotors(){
 
         this.leftMotor  = hardwareMap.dcMotor.get("leftMotor");
         this.rightMotor = hardwareMap.dcMotor.get("rightMotor");
@@ -446,10 +446,10 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
 
         turnOffMotors();
 
-    }
+    }*/
 
     //method for encoder to go certain distance in inches
-    private void shooterDrive(double power, double percent){
+    /*private void shooterDrive(double power, double percent){
 
         //converts the distance to int since settargetposition only accepts int values
         // also uses a formula so that when you type 2 in the robot goes 2 in
@@ -475,7 +475,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         //rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooterMotor.setPower(0);
-    }
+    }*/
 
     private void lineUpWithBeacon(VuforiaTrackable beac){
         OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) beac.getListener()).getPose();
@@ -515,7 +515,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
                 translation = pose.getTranslation();
                 x = translation.get(0);
 
-                if(x > 100) {
+                /*if(x > 100) {
                     frontMotor.setPower(.4);
                     backMotor.setPower(.4);
                 }else if(x < -100){
@@ -529,7 +529,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
                     backMotor.setPower(.2);
                 }
                 frontMotor.setPower(0);
-                backMotor.setPower(0);
+                backMotor.setPower(0);*/
             }
         }
     }
@@ -546,7 +546,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
                 translation = pose.getTranslation();
                 z = translation.get(2);
 
-                if(z < -650) {
+                /*if(z < -650) {
                     leftMotor.setPower(.4);
                     rightMotor.setPower(.4);
                 }else if(z < -500) {
@@ -557,7 +557,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
                     rightMotor.setPower(.2);
                 }
                 leftMotor.setPower(0);
-                rightMotor.setPower(0);
+                rightMotor.setPower(0);*/
             }
 
         }
@@ -585,7 +585,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         int distanceLeftInt = (int)Math.round(distanceLeftDouble * COUNTS_PER_INCH);
         int distanceRightInt = (int)Math.round(distanceRightDouble * COUNTS_PER_INCH);
 
-        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftMotor.setTargetPosition(distanceLeftInt);
@@ -596,16 +596,16 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
 
         // drive
         leftMotor.setPower(power);
-        rightMotor.setPower(power);
+        rightMotor.setPower(power);*/
 
-        while(opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy()){
+        /*while(opModeIsActive() && leftMotor.isBusy() && rightMotor.isBusy()){
             // Display it for the driver.
             telemetry.addData("Target distance",  "left %7d : right %7d", distanceLeftInt,  distanceRightInt);
             telemetry.addData("Current distance",  "left %7d : right %7d", leftMotor.getCurrentPosition(), rightMotor.getCurrentPosition());
             telemetry.update();
         }
 
-        turnOffMotors();
+        turnOffMotors();*/
 
         //leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -618,7 +618,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
         int distanceLeftInt = (int)Math.round(distanceLeftDouble * COUNTS_PER_INCH);
         int distanceRightInt = (int)Math.round(distanceRightDouble * COUNTS_PER_INCH);
 
-        frontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*frontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontMotor.setTargetPosition(distanceLeftInt);
@@ -638,7 +638,7 @@ public class autonomousPressBeaconsTest extends LinearOpMode {
             telemetry.update();
         }
 
-        turnOffMotors();
+        turnOffMotors();*/
 
         //leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
