@@ -120,7 +120,7 @@ public class basicAutonomousTest extends LinearOpMode {
 
     final private double PHASEONE = 2; // clamp block
     final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETWODOTONE = PHASETWO + 0.2; // turn on platform
+    final private double PHASETWODOTONE = PHASETWO + 0.15; // turn on platform
     final private double PHASETHREE = PHASETWODOTONE + 2.4; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motor
     final private double PHASETHREEHALFHALF = PHASETHREEHALF + .1; // turn off motor
