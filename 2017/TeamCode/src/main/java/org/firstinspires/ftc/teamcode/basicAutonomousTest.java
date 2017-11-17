@@ -39,7 +39,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraCalibration;
@@ -102,6 +104,9 @@ public class basicAutonomousTest extends LinearOpMode {
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    ColorSensor sensorColor;
+    DistanceSensor sensorDistance;
+
     int cooldown = 1000;
     private boolean isClamped = true;
     private double row1Position = 0.2;
@@ -111,15 +116,18 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double OPENCLAMPPOSITION = 0;
     final private double CLOSECLAMPPOSITION = .5;
     final private double LIFTEDARMPOSITION = .55;
+    final private double DOWNARMPOSITION = .8;
 
     final private double PHASEONE = 2; // clamp block
     final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETHREE = PHASETWO + 2.4; // drive forward
+    final private double PHASETWODOTONE = PHASETWO + 0.2; // turn on platform
+    final private double PHASETHREE = PHASETWODOTONE + 2.4; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motor
-    final private double PHASEFOUR = PHASETHREEHALF + .5; // open clamp
+    final private double PHASETHREEHALFHALF = PHASETHREEHALF + .1; // turn off motor
+    final private double PHASEFOUR = PHASETHREEHALFHALF + .5; // open clamp
     final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
-    final private double PHASESIX = PHASEFIVEHALF + .3; //disabled turn
+    final private double PHASESIX = PHASEFIVEHALF + .3; //turn
     final private double PHASESEVEN = PHASESIX + .2; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
     //turns off all motors at end
@@ -163,6 +171,11 @@ public class basicAutonomousTest extends LinearOpMode {
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
 
+        // get a reference to the color sensor.
+        sensorColor = hardwareMap.get(ColorSensor.class, "colorDistanceSensor");
+        // get a reference to the distance sensor that shares the same name.
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "colorDistanceSensor");
+
         jewelServo.setDirection(Servo.Direction.FORWARD);
         armServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
@@ -174,8 +187,36 @@ public class basicAutonomousTest extends LinearOpMode {
         double elapsedTime;
 
         // run until the end of the match (driver presses STOP)
+        boolean test = true;
         while (opModeIsActive())
         {
+
+            if(test) {
+                //assume red jewel is on left
+                clamp(CLOSECLAMPPOSITION);
+                stop(2);
+                jewelServo.setPosition(1);
+                stop(2);
+                armServo.setPosition(.9);
+                stop(.5);
+                double speed = 0.4;
+                if (isJewelRed()) {
+                    // the red jewel is on the left of sensor
+                    speed = -speed;
+                }
+                turn(speed);
+                stop(.25);
+                turnOffMotors();
+                jewelServo.setPosition(.65);
+                stop(2);
+                jewelServo.setPosition(0);
+                stop(2);
+                turn(-speed);
+                stop(.2);
+                turnOffMotors();
+                test = false;
+                runtime.reset();
+            }
             elapsedTime = runtime.time();
             if (elapsedTime < PHASEONE)
             {
@@ -184,6 +225,10 @@ public class basicAutonomousTest extends LinearOpMode {
             else if (elapsedTime < PHASETWO) {
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
+            else if (elapsedTime < PHASETWODOTONE)
+            {
+                turn(-0.5);
+            }
             else if(elapsedTime < PHASETHREE)
             {
                 drive(0, .5);
@@ -191,6 +236,10 @@ public class basicAutonomousTest extends LinearOpMode {
             else if(elapsedTime < PHASETHREEHALF)
             {
                 turnOffMotors();
+            }
+            else if (elapsedTime < PHASETHREEHALFHALF)
+            {
+                armServo.setPosition(DOWNARMPOSITION);
             }
             else if (elapsedTime < PHASEFOUR)
             {
@@ -319,6 +368,34 @@ public class basicAutonomousTest extends LinearOpMode {
     {
         double newPosition = currentPosition + .001;
         armServo.setPosition(newPosition);
+    }
+
+    private Boolean isJewelRed()
+    {
+        double differenceFactor = 1.5;
+        double red = sensorColor.red();
+        double blue = sensorColor.blue();
+        if(red >= 1.5 * blue)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void stop(double seconds) {
+        double currentTime = runtime.time();
+        double totalTime = currentTime + seconds;
+
+        while(currentTime < totalTime) {
+            currentTime = runtime.time();
+        }
+    }
+
+    // takes in a position from 0 (open all the way) to .5 (closed)
+    private void clamp(double position)
+    {
+        rightClampServo.setPosition(position);
+        leftClampServo.setPosition(position);
     }
 
 }
