@@ -81,7 +81,7 @@ public class cristhiansControls extends LinearOpMode {
             {
                 armServo.setPosition(.4);
             } else if (gamepad1.y) {
-                armServo.setPosition(0);
+                armServo.setPosition(.2);
             } else if (gamepad1.dpad_down) {
                 lowerArm(armServo.getPosition());
             } else if (gamepad1.dpad_up) {
@@ -105,7 +105,7 @@ public class cristhiansControls extends LinearOpMode {
                 isClamped = !isClamped;
                 if (isClamped) {
                     rightClampServo.setPosition(0);
-                    leftClampServo.setPosition(0);
+                    leftClampServo.setPosition(.1);
                 } else {
                     rightClampServo.setPosition(.5);
                     leftClampServo.setPosition(.5);
