@@ -79,7 +79,7 @@ public class cristhiansControls extends LinearOpMode {
                 armServo.setPosition(.8);
             } else if (gamepad1.b) // middle arm position
             {
-                armServo.setPosition(.4);
+                armServo.setPosition(.375);
             } else if (gamepad1.y) {
                 armServo.setPosition(.2);
             } else if (gamepad1.dpad_down) {
