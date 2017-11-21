@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -129,7 +131,8 @@ public class vuforiaImageTrackingTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-        parameters.vuforiaLicenseKey = "AdZOZEv/////AAAAGaqoHQLSt0TJrP23HiGwU8Mdqqts2/HFrn5wbhUmoa7zV76jXAPFEM1CQj+Ij86PNScilK4zkkGt6ckTicVLukBfaaw4+tb35Iq8Q7hDlVTgzszgoen+Pa9Um9yT7J6n6yac3PJbb66yYZggOuY4XWSOwBZwAaTIM++2rHVjzHvTsSrltICpyc1g8/UGrXmu78cSIoFV/AwmZrj+ZtKalyeHwKvLfvl/U0VuxDb/4EqjLinRrbragfSo42aCWp+TfDSqIncXn9bmwL6teZqW4LsC/Lvjldbg4tP8ZEK0UEm9stBcmNwi+51o32BHWaoN6g5+1Oy+C2B86O9BopLwTxWgJy3dfbI2foomi0aPb4ou";
+
+        parameters.vuforiaLicenseKey = "AY5Y5vL/////AAAAGX2e2w6Jc0ethIktT/zzRE1khe+fR9Mt2fiD8nQZ5KNecPTwAiKX5OZSAAZD/AeeaQbXrhx/NUL0ItyuFDzn5tzYDrVFnhryOQMyuK6RZsw0qG60IbzEffXP+ppGpWRvx/Owr+hJJpNcrIo6otnFFZ79vGiQQiDohkAAsHNIXymC8/xgHDk0XXhtU+UYA8yyhzIFOVNgwBRmYmNhomE/wmShZK69EOLfpfRVvjwE8dj2vlhwTChJ1r/4GUyXB7yZ092c19r345QEx511Nhl+Oo3PSolBWO2hn43uRZ5IB4e+cvR/O6KMV25ylM1toRR98TM06NmmGlbR3+19NBA9Ej7T2aOvCf3dSa0ZTpT+haT7";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         parameters.cameraMonitorFeedback = parameters.cameraMonitorFeedback.AXES;
         telemetry.addLine("spot 3");
