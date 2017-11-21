@@ -32,8 +32,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -105,9 +103,9 @@ public class autonomousTestImproved extends LinearOpMode {
         0.1, // turn off motors
     };
 
-    final private double PHASEONE = 2; // clamp block
-    final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETHREE = PHASETWO + 1.8; // drive forward
+    final private double CLAMPBLOCK = 2; // clamp block
+    final private double LIFTARM = CLAMPBLOCK + 2; //lift arm
+    final private double PHASETHREE = LIFTARM + 1.8; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motors
     final private double PHASEFOUR = PHASETHREEHALF + .5; // lowerarm
     final private double PHASEFIVE = PHASEFOUR + .6; // turn to face columns
@@ -209,11 +207,11 @@ public class autonomousTestImproved extends LinearOpMode {
             }
 
             elapsedTime = runtime.time();
-            if (elapsedTime < PHASEONE)
+            if (elapsedTime < CLAMPBLOCK)
             {
                 setClampPosition(CLOSECLAMPPOSITION);
             }
-            else if (elapsedTime < PHASETWO) {
+            else if (elapsedTime < LIFTARM) {
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
             else if(elapsedTime < PHASETHREE)
