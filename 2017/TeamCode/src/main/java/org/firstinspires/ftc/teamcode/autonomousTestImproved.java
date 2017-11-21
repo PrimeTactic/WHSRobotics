@@ -32,10 +32,14 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -68,6 +72,9 @@ public class autonomousTestImproved extends LinearOpMode {
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    ColorSensor sensorColor;
+    DistanceSensor sensorDistance;
+
     int cooldown = 1000;
     private boolean isClamped = true;
     private double row1Position = 0.2;
@@ -103,12 +110,12 @@ public class autonomousTestImproved extends LinearOpMode {
     final private double PHASETHREE = PHASETWO + 1.8; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motors
     final private double PHASEFOUR = PHASETHREEHALF + .5; // lowerarm
-    final private double PHASEFIVE = PHASEFOUR + .75; // turn to face columns
+    final private double PHASEFIVE = PHASEFOUR + .6; // turn to face columns
     final private double PHASESIX = PHASEFIVE + 2; // drive stright
     final private double PHASESIXHALF = PHASESIX + .1; // turn off motors
     final private double PHASESEVEN = PHASESIXHALF + .5; // open clamp
-    final private double PHASEEIGHT = PHASESEVEN + .3; // turn
-    final private double PHASENINE = PHASEEIGHT + .5; // back up
+    final private double PHASEEIGHT = PHASESEVEN + .5; // turn
+    final private double PHASENINE = PHASEEIGHT + .3; // back up
     final private double PHASENINEHALF = PHASENINE + .1; // turn off motors
 
     //turns off all motors at end
@@ -148,6 +155,10 @@ public class autonomousTestImproved extends LinearOpMode {
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
         jewelServo = hardwareMap.get(Servo.class , "jewelServo");
 
+        // get a reference to the color sensor.
+        sensorColor = hardwareMap.get(ColorSensor.class, "colorDistanceSensor");
+        // get a reference to the distance sensor that shares the same name.
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "colorDistanceSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -169,21 +180,28 @@ public class autonomousTestImproved extends LinearOpMode {
         boolean test = true;
         while (opModeIsActive())
         {
+
             if(test) {
+                //assume red jewel is on left
                 clamp(CLOSECLAMPPOSITION);
                 stop(2);
                 jewelServo.setPosition(1);
                 stop(2);
                 armServo.setPosition(.9);
                 stop(.5);
-                turn(-.3);
+                double speed = 0.4;
+                if (isJewelRed()) {
+                    // the red jewel is on the left of sensor
+                    speed = -speed;
+                }
+                turn(speed);
                 stop(.05);
                 turnOffMotors();
                 jewelServo.setPosition(.65);
                 stop(2);
                 jewelServo.setPosition(0);
                 stop(2);
-                turn(.3);
+                turn(-speed);
                 stop(.05);
                 turnOffMotors();
                 test = false;
@@ -328,6 +346,18 @@ public class autonomousTestImproved extends LinearOpMode {
     {
         rightClampServo.setPosition(newClampPosition);
         leftClampServo.setPosition(newClampPosition);
+    }
+
+    private Boolean isJewelRed()
+    {
+        double differenceFactor = 1.5;
+        double red = sensorColor.red();
+        double blue = sensorColor.blue();
+        if(red >= 1.5 * blue)
+        {
+            return true;
+        }
+        return false;
     }
 
 
