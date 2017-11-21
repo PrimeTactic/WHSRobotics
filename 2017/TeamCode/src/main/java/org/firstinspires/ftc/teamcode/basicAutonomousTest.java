@@ -32,48 +32,16 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Bitmap;
-import android.os.Environment;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.CameraCalibration;
-import com.vuforia.HINT;
-import com.vuforia.Image;
-import com.vuforia.Matrix34F;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Tool;
-import com.vuforia.Vec3F;
-import com.vuforia.Vuforia;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import static java.lang.Math.sqrt;
 
@@ -118,18 +86,29 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double LIFTEDARMPOSITION = .55;
     final private double DOWNARMPOSITION = .8;
 
-    final private double PHASEONE = 2; // clamp block
-    final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETWODOTONE = PHASETWO + 0.15; // turn on platform
-    final private double PHASETHREE = PHASETWODOTONE + 2.4; // drive forward
-    final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motor
-    final private double PHASETHREEHALFHALF = PHASETHREEHALF + .1; // turn off motor
+    final private double JEWELCLOSECLAMP = .05; // close clamp
+    final private double JEWELCHOPTIME = JEWELCLOSECLAMP + 1; // jewel servo down
+    final private double JEWELARMRAISE = JEWELCHOPTIME + .5; // arm servo up
+    final private double SPINTOWIN = JEWELARMRAISE + .1; // turn to knock off jewel
+    final private double JEWELSHEATHARM = SPINTOWIN + 2; // raise arm to sheath
+    final private double JEWELSTOREARM = JEWELSHEATHARM + .5; // store arm
+    final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
+    final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
+    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 0.2; // turn on platform
+    final private double DRIVETOWARDSCOLUMNS = TURNTOLINEUPWITHCOLUMNS + 2.4; // drive forward
+    final private double TURNOFFMOTORS = DRIVETOWARDSCOLUMNS + .1; // turn off motor
+    final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .1; // lower arm
     final private double PHASEFOUR = PHASETHREEHALFHALF + .5; // open clamp
     final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
-    final private double PHASESIX = PHASEFIVEHALF + .3; //turn
-    final private double PHASESEVEN = PHASESIX + .2; // back up
+    final private double PHASESIX = PHASEFIVEHALF + .5; //turn
+    final private double PHASESEVEN = PHASESIX + .8; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
+    final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
+    final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 1.6; // drive to the glyph pit
+    final private double GRABABLOCK = DRIVETOGLYPHPIT + 1.5; // grab a block in the pit
+    final private double BACKTOBASE = GRABABLOCK + 1.45; // grab a block in the pit
+    final private double TURNTOFACECOLUMNS = BACKTOBASE + .4; // turn to face columns
     //turns off all motors at end
 
 
@@ -191,7 +170,7 @@ public class basicAutonomousTest extends LinearOpMode {
         while (opModeIsActive())
         {
 
-            if(test) {
+            /*if(test) {
                 //assume red jewel is on left
                 clamp(CLOSECLAMPPOSITION);
                 stop(2);
@@ -205,7 +184,7 @@ public class basicAutonomousTest extends LinearOpMode {
                     speed = -speed;
                 }
                 turn(speed);
-                stop(.25);
+                stop(.15);
                 turnOffMotors();
                 jewelServo.setPosition(.65);
                 stop(2);
@@ -216,24 +195,57 @@ public class basicAutonomousTest extends LinearOpMode {
                 turnOffMotors();
                 test = false;
                 runtime.reset();
-            }
+            }*/
             elapsedTime = runtime.time();
-            if (elapsedTime < PHASEONE)
+            double speed = 1;
+            Boolean isDetected = false;
+            if (elapsedTime < JEWELCLOSECLAMP)
             {
-                setClampPosition(CLOSECLAMPPOSITION);
+                clamp(CLOSECLAMPPOSITION);
             }
-            else if (elapsedTime < PHASETWO) {
+            else if (elapsedTime < JEWELCHOPTIME)
+            {
+                jewelServo.setPosition(1);
+            }
+            else if (elapsedTime < JEWELARMRAISE)
+            {
+                armServo.setPosition(.9);
+            }
+            else if (elapsedTime < SPINTOWIN)
+            {
+                if (isJewelRed()&& !isDetected) {
+                    // the red jewel is on the left of sensor
+                    speed = -speed;
+                    isDetected = !isDetected;
+                }
+                turn(speed);
+            }
+            else if (elapsedTime < JEWELSHEATHARM)
+            {
+                turnOffMotors();
+                jewelServo.setPosition(.65);
+            }
+            else if (elapsedTime < JEWELSTOREARM)
+            {
+                jewelServo.setPosition(0);
+            }
+            else if (elapsedTime < JEWELSPINBACK)
+            {
+                turn(speed);
+            }
+            else if (elapsedTime < LIFTARM) {
+                turnOffMotors();
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
-            else if (elapsedTime < PHASETWODOTONE)
+            else if (elapsedTime < TURNTOLINEUPWITHCOLUMNS)
             {
                 turn(-0.5);
             }
-            else if(elapsedTime < PHASETHREE)
+            else if(elapsedTime < DRIVETOWARDSCOLUMNS)
             {
                 drive(0, .5);
             }
-            else if(elapsedTime < PHASETHREEHALF)
+            else if(elapsedTime < TURNOFFMOTORS)
             {
                 turnOffMotors();
             }
@@ -264,6 +276,27 @@ public class basicAutonomousTest extends LinearOpMode {
             else if (elapsedTime < PHASESEVENHALF)
             {
                 turnOffMotors();
+            }
+            else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            {
+                turn(1);
+            }
+            else if (elapsedTime < DRIVETOGLYPHPIT)
+            {
+                drive(0, 1);
+            }
+            else if (elapsedTime < GRABABLOCK)
+            {
+                turnOffMotors();
+                setClampPosition(CLOSECLAMPPOSITION);
+            }
+            else if (elapsedTime < BACKTOBASE)
+            {
+                drive(0,-1);
+            }
+            else if (elapsedTime < TURNTOFACECOLUMNS)
+            {
+                turn(-1);
             }
             else {
                 turnOffMotors();
