@@ -62,16 +62,18 @@ public class cristhiansControls extends LinearOpMode {
         runtime.reset();
         double clawActiveTimeInSec = 0;
         boolean clawActive = false;
-
+        double elapsedTime;
 
         //Always True
-        while (opModeIsActive()) {
+        while (opModeIsActive() ) {
+            elapsedTime = runtime.time();
             // on gamepad movement (controls robot wheel movment)
             if (gamepad1.atRest()) {
                 turnOffMotors();
-            } else {
+            } else if (elapsedTime >= .5){
                 drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
                 turn(gamepad1.left_stick_x);
+                runtime.reset();
             }
 
             //Arm Height
