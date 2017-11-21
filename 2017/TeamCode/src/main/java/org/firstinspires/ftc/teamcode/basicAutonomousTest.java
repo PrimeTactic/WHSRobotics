@@ -108,7 +108,7 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 1.6; // drive to the glyph pit
     final private double GRABABLOCK = DRIVETOGLYPHPIT + 1.5; // grab a block in the pit
     final private double BACKTOBASE = GRABABLOCK + 1.45; // grab a block in the pit
-    final private double TURNTOFACECOLUMNS = BACKTOBASE + .4; // turn to face columns
+    final private double TURNTOFACECOLUMNS = BACKTOBASE + .6; // turn to face columns
     //turns off all motors at end
 
 
@@ -197,7 +197,7 @@ public class basicAutonomousTest extends LinearOpMode {
                 runtime.reset();
             }*/
             elapsedTime = runtime.time();
-            double speed = 1;
+            double speed = .8;
             Boolean isDetected = false;
             if (elapsedTime < JEWELCLOSECLAMP)
             {
@@ -296,7 +296,7 @@ public class basicAutonomousTest extends LinearOpMode {
             }
             else if (elapsedTime < TURNTOFACECOLUMNS)
             {
-                turn(-1);
+                turn(1);
             }
             else {
                 turnOffMotors();
