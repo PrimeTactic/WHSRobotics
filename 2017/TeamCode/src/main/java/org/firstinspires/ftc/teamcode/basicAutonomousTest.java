@@ -105,9 +105,9 @@ public class basicAutonomousTest extends LinearOpMode {
     final private double PHASESEVEN = PHASESIX + .8; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
     final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
-    final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 1.6; // drive to the glyph pit
+    final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 2.4; // drive to the glyph pit
     final private double GRABABLOCK = DRIVETOGLYPHPIT + 1.5; // grab a block in the pit
-    final private double BACKTOBASE = GRABABLOCK + 1.45; // grab a block in the pit
+    final private double BACKTOBASE = GRABABLOCK + 2.1; // grab a block in the pit
     final private double TURNTOFACECOLUMNS = BACKTOBASE + .6; // turn to face columns
     //turns off all motors at end
 
