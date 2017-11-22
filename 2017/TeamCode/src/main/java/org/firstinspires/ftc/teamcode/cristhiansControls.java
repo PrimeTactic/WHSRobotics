@@ -70,10 +70,10 @@ public class cristhiansControls extends LinearOpMode {
             // on gamepad movement (controls robot wheel movment)
             if (gamepad1.atRest()) {
                 turnOffMotors();
-            } else if (elapsedTime >= .5){
+            } else{
                 drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
                 turn(gamepad1.left_stick_x);
-                runtime.reset();
+                //runtime.reset();
             }
 
             //Arm Height
@@ -107,10 +107,10 @@ public class cristhiansControls extends LinearOpMode {
                 isClamped = !isClamped;
                 if (isClamped) {
                     rightClampServo.setPosition(0);
-                    leftClampServo.setPosition(.1);
+                    leftClampServo.setPosition(.2);
                 } else {
                     rightClampServo.setPosition(.5);
-                    leftClampServo.setPosition(.5);
+                    leftClampServo.setPosition(.55);
                 }
             }
             else if (clawActive)
