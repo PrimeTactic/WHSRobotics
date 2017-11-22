@@ -35,7 +35,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -66,9 +68,13 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
     private DcMotor motor1; // back motor
     private DcMotor motor2; // left motor
     private DcMotor motor3; // right motor
+    private Servo jewelServo;
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
+    ColorSensor sensorColor;
+    DistanceSensor sensorDistance;
+
     int cooldown = 1000;
     private boolean isClamped = true;
     private double row1Position = 0.2;
@@ -78,38 +84,33 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
     final private double OPENCLAMPPOSITION = 0;
     final private double CLOSECLAMPPOSITION = .5;
     final private double LIFTEDARMPOSITION = .55;
+    final private double DOWNARMPOSITION = .8;
 
-    final private double[] JEWEL_PHASE = {
-        0.5, // arm falls
-        0.5, // turn
-        1.0, // bring arm up
-        0.5, // put arm away
-    };
+    final private double JEWELCLOSECLAMP = .05; // close clamp
+    final private double JEWELCHOPTIME = JEWELCLOSECLAMP + 1; // jewel servo down
+    final private double JEWELARMRAISE = JEWELCHOPTIME + .5; // arm servo up
+    final private double SPINTOWIN = JEWELARMRAISE + .1; // turn to knock off jewel
+    final private double JEWELSHEATHARM = SPINTOWIN + 2; // raise arm to sheath
+    final private double JEWELSTOREARM = JEWELSHEATHARM + .5; // store arm
+    final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
 
-    final private double[] VIEW_PHASE = {
-        0.5, // undo turn
-        2.0, // detect picture
-        2.0, // approach column
-        0.1, // turn off motors
-        0.5, // open clamp
-        0.3, // turn to push cube in slot
-        0.5, // back up
-        0.1, // turn off motors
-    };
-
-    final private double PHASEONE = 2; // clamp block
-    final private double PHASETWO = PHASEONE + 2; //lift arm
-    final private double PHASETHREE = PHASETWO + 1.8; // drive forward
+    final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
+    final private double PHASETHREE = LIFTARM + 1.8; // drive backward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motors
     final private double PHASEFOUR = PHASETHREEHALF + .5; // lowerarm
-    final private double PHASEFIVE = PHASEFOUR + .75; // turn to face columns
+    final private double PHASEFIVE = PHASEFOUR + .6; // turn to face columns
     final private double PHASESIX = PHASEFIVE + 2; // drive stright
     final private double PHASESIXHALF = PHASESIX + .1; // turn off motors
     final private double PHASESEVEN = PHASESIXHALF + .5; // open clamp
-    final private double PHASEEIGHT = PHASESEVEN + .3; // turn
-    final private double PHASENINE = PHASEEIGHT + .5; // back up
+    final private double PHASEEIGHT = PHASESEVEN + .5; // turn
+    final private double PHASENINE = PHASEEIGHT + .3; // back up
     final private double PHASENINEHALF = PHASENINE + .1; // turn off motors
 
+    final private double TURNTOWARDSGLYPHPIT = PHASENINEHALF + .6; // turn towards glyph pit
+    final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 1; // drive to the glyph pit
+    final private double GRABABLOCK = DRIVETOGLYPHPIT + 1.5; // grab a block in the pit
+    final private double BACKTOBASE = GRABABLOCK + .75; // grab a block in the pit
+    final private double TURNTOFACECOLUMNS = BACKTOBASE + .6; // turn to face columns
     //turns off all motors at end
 
 
@@ -122,8 +123,12 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
-        motor3 = hardwareMap.get(DcMotor.class, "motor3");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
+        motor3 = hardwareMap.get(DcMotor.class, "motor3");
+
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor2.setDirection(DcMotor.Direction.FORWARD);
+        motor3.setDirection(DcMotor.Direction.FORWARD);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -142,17 +147,17 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         gyro = hardwareMap.get(BNO055IMU.class, "gyro");
         gyro.initialize(parameters);
 
+        jewelServo = hardwareMap.get(Servo.class, "jewelServo");
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
 
+        // get a reference to the color sensor.
+        sensorColor = hardwareMap.get(ColorSensor.class, "colorDistanceSensor");
+        // get a reference to the distance sensor that shares the same name.
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "colorDistanceSensor");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        motor1.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
-
+        jewelServo.setDirection(Servo.Direction.FORWARD);
         armServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
@@ -163,19 +168,79 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         double elapsedTime;
 
         // run until the end of the match (driver presses STOP)
+        boolean test = true;
         while (opModeIsActive())
         {
+
+            /*if(test) {
+                //assume red jewel is on left
+                clamp(CLOSECLAMPPOSITION);
+                stop(2);
+                jewelServo.setPosition(1);
+                stop(2);
+                armServo.setPosition(.9);
+                stop(.5);
+                double speed = 0.4;
+                if (isJewelRed()) {
+                    // the red jewel is on the left of sensor
+                    speed = -speed;
+                }
+                turn(speed);
+                stop(.15);
+                turnOffMotors();
+                jewelServo.setPosition(.65);
+                stop(2);
+                jewelServo.setPosition(0);
+                stop(2);
+                turn(-speed);
+                stop(.2);
+                turnOffMotors();
+                test = false;
+                runtime.reset();
+            }*/
             elapsedTime = runtime.time();
-            if (elapsedTime < PHASEONE)
+            double speed = .8;
+            Boolean isDetected = false;
+            if (elapsedTime < JEWELCLOSECLAMP)
             {
-                setClampPosition(CLOSECLAMPPOSITION);
+                clamp(CLOSECLAMPPOSITION);
             }
-            else if (elapsedTime < PHASETWO) {
+            else if (elapsedTime < JEWELCHOPTIME)
+            {
+                jewelServo.setPosition(1);
+            }
+            else if (elapsedTime < JEWELARMRAISE)
+            {
+                armServo.setPosition(.9);
+            }
+            else if (elapsedTime < SPINTOWIN)
+            {
+                if (isJewelRed()&& !isDetected) {
+                    // the red jewel is on the left of sensor
+                    speed = -speed;
+                    isDetected = !isDetected;
+                }
+                turn(speed);
+            }
+            else if (elapsedTime < JEWELSHEATHARM)
+            {
+                turnOffMotors();
+                jewelServo.setPosition(.65);
+            }
+            else if (elapsedTime < JEWELSTOREARM)
+            {
+                jewelServo.setPosition(0);
+            }
+            else if (elapsedTime < JEWELSPINBACK)
+            {
+                turn(speed);
+            }
+            else if (elapsedTime < LIFTARM) {
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
             else if(elapsedTime < PHASETHREE)
             {
-                drive(0, .5);
+                drive(0, -.5);
             }
             else if(elapsedTime < PHASETHREEHALF)
             {
@@ -187,7 +252,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEFIVE)
             {
-                turn(-.5);
+                turn(.5/2);
             }
             else if (elapsedTime < PHASESIX)
             {
@@ -203,7 +268,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEEIGHT)
             {
-                turn(-.5);
+                turn(.5/2);
             }
             else if (elapsedTime < PHASENINE)
             {
@@ -213,6 +278,27 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             {
                 turnOffMotors();
             }
+           /* else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            {
+                turn(1);
+            }
+            else if (elapsedTime < DRIVETOGLYPHPIT)
+            {
+                drive(0, 1);
+            }
+            else if (elapsedTime < GRABABLOCK)
+            {
+                turnOffMotors();
+                setClampPosition(CLOSECLAMPPOSITION);
+            }
+            else if (elapsedTime < BACKTOBASE)
+            {
+                drive(0,-1);
+            }
+            else if (elapsedTime < TURNTOFACECOLUMNS)
+            {
+                turn(1);
+            }*/
             else {
                 turnOffMotors();
             }
@@ -246,14 +332,14 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         //}
 
 
-        //final float correctionZoneDegrees = 5;
-        //AngularVelocity v = gyro.getAngularVelocity();
-        //float v_x = v.xRotationRate; // positive is clockwise
-        //double correctionValue = 0;
-        //if (Math.abs(v_x) > correctionZoneDegrees)
-        //{
-            //correctionValue = (double)(v_x / 200.0);
-        //}
+        final float correctionZoneDegrees = 5;
+        AngularVelocity v = gyro.getAngularVelocity();
+        float v_x = v.xRotationRate; // positive is clockwise
+        double correctionValue = 0;
+        if (Math.abs(v_x) > correctionZoneDegrees)
+        {
+            correctionValue = (double)(v_x / 200.0);
+        }
 
         double power1 = scale * x;
         double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)); //- correctionValue;
@@ -316,6 +402,34 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
     {
         double newPosition = currentPosition + .001;
         armServo.setPosition(newPosition);
+    }
+
+    private Boolean isJewelRed()
+    {
+        double differenceFactor = 1.5;
+        double red = sensorColor.red();
+        double blue = sensorColor.blue();
+        if(red >= 1.5 * blue)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void stop(double seconds) {
+        double currentTime = runtime.time();
+        double totalTime = currentTime + seconds;
+
+        while(currentTime < totalTime) {
+            currentTime = runtime.time();
+        }
+    }
+
+    // takes in a position from 0 (open all the way) to .5 (closed)
+    private void clamp(double position)
+    {
+        rightClampServo.setPosition(position);
+        leftClampServo.setPosition(position);
     }
 
 }

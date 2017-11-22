@@ -59,9 +59,9 @@ import static java.lang.Math.sqrt;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="redStrightAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@Autonomous(name="blueStrightAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
-public class redStrightAutonomousFinal extends LinearOpMode {
+public class blueStrightAutonomousFinal extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -94,16 +94,20 @@ public class redStrightAutonomousFinal extends LinearOpMode {
     final private double JEWELSTOREARM = JEWELSHEATHARM + .5; // store arm
     final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
     final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
-    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 0.2; // turn on platform
-    final private double DRIVETOWARDSCOLUMNS = TURNTOLINEUPWITHCOLUMNS + 2.4; // drive forward
-    final private double TURNOFFMOTORS = DRIVETOWARDSCOLUMNS + .1; // turn off motor
+    final private double DRIVETOWARDSCOLUMNS = LIFTARM + 1.4; // backward
+    final private double TURNTOLINEUPWITHCOLUMNS = DRIVETOWARDSCOLUMNS + 1.4; // turn on face columns
+
+    final private double LATERALLINEUPWITHCOLUMN = TURNTOLINEUPWITHCOLUMNS + 1; // turn off motor
+
+    final private double TURNOFFMOTORS = LATERALLINEUPWITHCOLUMN + .1; // turn off motor
     final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .1; // lower arm
     final private double PHASEFOUR = PHASETHREEHALFHALF + .5; // open clamp
-    final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
+    final private double PHASEFIVE = PHASEFOUR + 1.5; // drive forward
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
     final private double PHASESIX = PHASEFIVEHALF + .5; //turn
     final private double PHASESEVEN = PHASESIX + .8; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
+
     final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
     final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 2.4; // drive to the glyph pit
     final private double GRABABLOCK = DRIVETOGLYPHPIT + 1.5; // grab a block in the pit
@@ -237,13 +241,17 @@ public class redStrightAutonomousFinal extends LinearOpMode {
                 turnOffMotors();
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
+            else if(elapsedTime < DRIVETOWARDSCOLUMNS)
+            {
+                drive(0, -.5);
+            }
             else if (elapsedTime < TURNTOLINEUPWITHCOLUMNS)
             {
                 turn(-0.5);
             }
-            else if(elapsedTime < DRIVETOWARDSCOLUMNS)
+            else if (elapsedTime < LATERALLINEUPWITHCOLUMN)
             {
-                drive(0, .5);
+                drive(.5,0);
             }
             else if(elapsedTime < TURNOFFMOTORS)
             {
@@ -277,7 +285,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             {
                 turnOffMotors();
             }
-            else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            /*else if (elapsedTime < TURNTOWARDSGLYPHPIT)
             {
                 turn(1);
             }
@@ -297,7 +305,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             else if (elapsedTime < TURNTOFACECOLUMNS)
             {
                 turn(1);
-            }
+            }*/
             else {
                 turnOffMotors();
             }
