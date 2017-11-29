@@ -171,6 +171,8 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         boolean test = true;
+        double speed = .8;
+        boolean isDetected = false;
         while (opModeIsActive())
         {
 
@@ -201,8 +203,6 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
                 runtime.reset();
             }*/
             elapsedTime = runtime.time();
-            double speed = .8;
-            Boolean isDetected = false;
             if (elapsedTime < JEWELCLOSECLAMP)
             {
                 clamp(CLOSECLAMPPOSITION);
@@ -235,7 +235,7 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < JEWELSPINBACK)
             {
-                turn(speed);
+                turn(-speed);
             }
             else if (elapsedTime < LIFTARM) {
                 turnOffMotors();
@@ -309,7 +309,7 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
             else {
                 turnOffMotors();
             }
-            updateTelemetry();
+            //updateTelemetry();
         }
     }
 

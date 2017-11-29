@@ -169,6 +169,8 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         boolean test = true;
+        double speed = .8;
+        boolean isDetected = false;
         while (opModeIsActive())
         {
 
@@ -199,8 +201,6 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
                 runtime.reset();
             }*/
             elapsedTime = runtime.time();
-            double speed = .8;
-            Boolean isDetected = false;
             if (elapsedTime < JEWELCLOSECLAMP)
             {
                 clamp(CLOSECLAMPPOSITION);
@@ -233,7 +233,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < JEWELSPINBACK)
             {
-                turn(speed);
+                turn(-speed);
             }
             else if (elapsedTime < LIFTARM) {
                 armServo.setPosition(LIFTEDARMPOSITION);
