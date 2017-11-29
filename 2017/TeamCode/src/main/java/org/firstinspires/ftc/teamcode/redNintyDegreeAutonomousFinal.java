@@ -215,7 +215,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < SPINTOWIN)
             {
-                if (isJewelRed()&& !isDetected) {
+                if (!isJewelRed()&& !isDetected) {
                     // the red jewel is on the left of sensor
                     speed = -speed;
                     isDetected = !isDetected;
