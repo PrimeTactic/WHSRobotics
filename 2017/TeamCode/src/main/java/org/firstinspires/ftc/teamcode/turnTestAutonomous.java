@@ -59,7 +59,7 @@ import static java.lang.Math.sqrt;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="redNintyDegreeAutonomousFinal", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@Autonomous(name="turnTestAutonomous", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class turnTestAutonomous extends LinearOpMode {
 
@@ -171,8 +171,14 @@ public class turnTestAutonomous extends LinearOpMode {
         boolean test = true;
         while (opModeIsActive())
         {
-            turn(.5);
-            sleep(500);
+            if(test)
+            {
+                turn(1.5);
+                sleep(500);
+                turnOffMotors();
+                test = false;
+            }
+
 
         }
     }
