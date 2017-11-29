@@ -61,7 +61,7 @@ import static java.lang.Math.sqrt;
 
 // this is a test comment
 @TeleOp(name="teleOPFinal", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class teleOPFinal extends LinearOpMode {
     
     // Declare OpMode members.
