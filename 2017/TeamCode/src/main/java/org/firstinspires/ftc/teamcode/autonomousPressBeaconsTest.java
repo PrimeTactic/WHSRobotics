@@ -85,7 +85,7 @@ import java.util.Arrays;
  */
 
 @Autonomous(name="autonomousPressBeaconsTest", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class autonomousPressBeaconsTest extends LinearOpMode {
 
     /* Declare OpMode members. */
