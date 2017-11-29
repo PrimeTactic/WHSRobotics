@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package uselessCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.sqrt;
 
 @TeleOp(name="Crab_Controls", group="Linear Opmode")
-
+@Disabled
 public class crabControls extends LinearOpMode {
     //teleOPFinal
 

@@ -27,20 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package uselessCode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-
-import static java.lang.Math.sqrt;
 
 
 /**
@@ -54,52 +47,40 @@ import static java.lang.Math.sqrt;
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- * http://robocup.mi.fu-berlin.de/buch/omnidrive.pdf
- * https://stackoverflow.com/questions/3748037/how-to-control-a-kiwi-drive-robot
  */
 
-// this is a test comment
-@TeleOp(name="teleOPv1", group="Linear Opmode")
+@TeleOp(name="servoTests", group="Linear Opmode")
 @Disabled
-public class teleOPv1 extends LinearOpMode {
-    
+public class servoTest extends LinearOpMode {
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motor1; // back motor
-    private DcMotor motor2; // left motor
-    private DcMotor motor3; // right motor
     private Servo armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
-    int cooldown = 1000;
     private boolean isClamping = true;
     private double row1Position = 0.2;
     private double row2Position = 0.4;
     private double row3Position = 0.6;
 
+
+
     @Override
     public void runOpMode() {
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        motor1 = hardwareMap.get(DcMotor.class, "motor1");
-        motor3 = hardwareMap.get(DcMotor.class, "motor3");
-        motor2 = hardwareMap.get(DcMotor.class, "motor2");
-
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
         rightClampServo = hardwareMap.get(Servo.class, "rightClampServo");
 
-
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        motor1.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
-
         armServo.setDirection(Servo.Direction.FORWARD);
         rightClampServo.setDirection(Servo.Direction.REVERSE);
         leftClampServo.setDirection(Servo.Direction.FORWARD);
@@ -107,39 +88,55 @@ public class teleOPv1 extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        //boolean goTrue = true;
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive())
-        {
-            // on gamepad movement (controls robot wheel movment)
-            if (gamepad1.atRest())  // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-            {
-                turnOffMotors();
-            }
-            else
-            {
-                drive(gamepad1.right_stick_x, -gamepad1.right_stick_y);
-                turn(gamepad1.left_stick_x);
-            }
+        while (opModeIsActive()) {
 
-            // on button presses (controls arm movement)
-            if (gamepad1.a)
+            // Setup a variable for each drive wheel to save power level for telemetry
+            double grabberPosition = armServo.getPosition();
+
+            // Choose to drive using either Tank Mode, or POV Mode
+            // Comment out the method that's not used.  The default below is POV.
+
+            // POV Mode uses left stick to go forward, and right stick to turn.
+            // - This uses basic math to combine motions and is easier to drive straight.
+            //autonomous code in teleop to test out how the servo moves, runs once
+            /*if(goTrue == true)
+            {
+                armServo.setPosition(.6);
+                sleep(2000);
+                armServo.setPosition(.5);
+                sleep(2000);
+                armServo.setPosition(.2);
+                sleep(2000);
+                armServo.setPosition(.8);
+            }
+            goTrue = false;
+
+            if(gamepad1.a)
+            {
+                telemetry.addLine("yay");
+            }*/
+            //  if(gamepad1.atRest())  // consider removing
+            // {
+            //      armServo.setPosition(1);   //^
+            // }
+            if(gamepad1.a)
             {
                 armServo.setPosition(.8);
             }
-            else if (gamepad1.b) // middle arm position
+            else if(gamepad1.b) // middle arm position
             {
-                armServo.setPosition(.5);
+                armServo.setPosition(.4);
             }
-            else if (gamepad1.y)
+            else if(gamepad1.y)
             {
                 armServo.setPosition(0);
             }
-
-            if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
+            else if(gamepad1.x)
             {
                 // toggles if the arm is clamping every time x is pressed
-                cooldown = 1000; // reset cooldown
                 isClamping = !isClamping;
                 if (isClamping) {
                     rightClampServo.setPosition(0);
@@ -150,68 +147,55 @@ public class teleOPv1 extends LinearOpMode {
                     leftClampServo.setPosition(.5);
                 }
             }
-            else if (cooldown > 0) {
-                cooldown--;
-            }
+            //else if(gamepad1.x)
+            //{
+            //    rightClampServo.setPosition(0);
+            //    leftClampServo.setPosition(0);
+            //}
 
-            // Show the elapsed game time and wheel power
+            //if(gamepad1.atRest())
+            //{
+                //rightClampServo.setPosition(0);
+            //}
+            //if(gamepad1.left_stick_y != 0)
+            //{
+            //    rightClampServo.setPosition(-gamepad1.left_stick_y);
+            //}
+            //Values are just placeholders for now. We will add real ones after we run telemetry
+
+            //if(gamepad1.atRest())
+            //{
+            //    leftClampServo.setPosition(0);
+            //}
+            //else if(gamepad1.left_stick_y != 0)
+            //{
+            //    leftClampServo.setPosition(-gamepad1.left_stick_y);
+            //}
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             updateTelemetry();
         }
     }
 
     public void updateTelemetry(){
-        //[dont need to make variables for servo values (redundent)]
-        //double armServoValue = armServo.getPosition();
-        //double leftClampValue = leftClampServo.getPosition();
-        //double rightClampValue = rightClampServo.getPosition();
-        //boolean aButton = gamepad1.a;
-        telemetry.addData("Status", "Run Time   : " + runtime.toString());
-        telemetry.addData("Arm servo position   : " , armServo.getPosition());
-        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
-        telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("a button             : " , gamepad1.a);
-        telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
-        telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
-        telemetry.addData("motor 1 power        : " , motor1.getPower());
-        telemetry.addData("motor 2 power        : " , motor2.getPower());
-        telemetry.addData("motor 3 power        : " , motor3.getPower());
-
+        double armServoValue = armServo.getPosition();
+        double leftClampValue = leftClampServo.getPosition();
+        double rightClampValue = rightClampServo.getPosition();
+        boolean aButton = gamepad1.a;
+        telemetry.addData("Run Time", runtime.toString());
+        telemetry.addData("Arm servo position", armServoValue);
+        telemetry.addData("Left clamp position", leftClampValue);
+        telemetry.addData("Right clamp position", rightClampValue);
+        telemetry.addData("a button", aButton);
         telemetry.update();
     }
 
-    //drive method that accepts two values, x and y motion
-    public void drive(double x, double y)
-    {
-        //double power1 = x;
-        //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
-        //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
-        double divisor = 1;
-        // for precise movement
-        if (gamepad1.right_bumper) {
-            divisor = 2;
-        }
-        motor1.setPower(x / divisor);
-        motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / divisor);
-        motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / divisor);
+    public void gotoRow(int row){
+        // Go to Row (Number)
     }
 
-    private void turnOffMotors()
-    {
-        motor1.setPower(0);
-        motor3.setPower(0);
-        motor2.setPower(0);
+    public void toggleGrabber(){
+        //Clamp/Release Grabber
     }
-
-    private void turn(double speed)
-    {
-        double divisor = 2;
-        // of the bumper is being held than make the robot turn slower
-        if (gamepad1.left_bumper) {
-            divisor = 4;
-        }
-        motor1.setPower(-speed/divisor);
-        motor3.setPower(-speed/divisor);
-        motor2.setPower(-speed/divisor);
-    }
-    
 }

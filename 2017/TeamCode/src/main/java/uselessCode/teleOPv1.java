@@ -27,16 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package uselessCode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 
@@ -59,9 +59,9 @@ import static java.lang.Math.sqrt;
  */
 
 // this is a test comment
-@TeleOp(name="teleOPFinal", group="Linear Opmode")
-//@Disabled
-public class teleOPFinal extends LinearOpMode {
+@TeleOp(name="teleOPv1", group="Linear Opmode")
+@Disabled
+public class teleOPv1 extends LinearOpMode {
     
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -72,14 +72,10 @@ public class teleOPFinal extends LinearOpMode {
     private Servo leftClampServo;
     private Servo rightClampServo;
     int cooldown = 1000;
-    private boolean isClamped = true;
+    private boolean isClamping = true;
     private double row1Position = 0.2;
     private double row2Position = 0.4;
     private double row3Position = 0.6;
-    private BNO055IMU gyro;
-    final private double OPENCLAMPPOSITION = 0;
-    final private double CLOSECLAMPPOSITION = .5;
-
 
     @Override
     public void runOpMode() {
@@ -92,23 +88,6 @@ public class teleOPFinal extends LinearOpMode {
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
         motor3 = hardwareMap.get(DcMotor.class, "motor3");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = false;
-        parameters.loggingTag          = "gyro";
-        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        gyro = hardwareMap.get(BNO055IMU.class, "gyro");
-        gyro.initialize(parameters);
 
         armServo = hardwareMap.get(Servo.class, "armServo");
         leftClampServo = hardwareMap.get(Servo.class, "leftClampServo");
@@ -150,55 +129,29 @@ public class teleOPFinal extends LinearOpMode {
             }
             else if (gamepad1.b) // middle arm position
             {
-                armServo.setPosition(.4);
+                armServo.setPosition(.5);
             }
             else if (gamepad1.y)
             {
                 armServo.setPosition(0);
-            }
-            else if(gamepad1.dpad_down)
-            {
-                lowerArm(armServo.getPosition());
-            }
-            else if(gamepad1.dpad_up)
-            {
-                liftArm(armServo.getPosition());
-            }
-            else if(gamepad1.left_trigger > .5)
-            {
-                drive(-1, 0); //drive left
-            }
-            else if(gamepad1.right_trigger > .5)
-            {
-                drive(1, 0); //drive right
             }
 
             if (gamepad1.x && cooldown <= 0) // only allow toggling the claws every 100 loops
             {
                 // toggles if the arm is clamping every time x is pressed
                 cooldown = 1000; // reset cooldown
-                isClamped = !isClamped;
-                if (isClamped) {
-                    setClampPosition(OPENCLAMPPOSITION);
+                isClamping = !isClamping;
+                if (isClamping) {
+                    rightClampServo.setPosition(0);
+                    leftClampServo.setPosition(0);
                 }
                 else {
-                    setClampPosition(CLOSECLAMPPOSITION);
+                    rightClampServo.setPosition(.5);
+                    leftClampServo.setPosition(.5);
                 }
             }
             else if (cooldown > 0) {
                 cooldown--;
-            }
-            else if(gamepad1.dpad_down || gamepad1.dpad_right )
-            {
-                if(gamepad1.dpad_right)
-                {
-                    rightClampServo.setPosition(.4);
-                    leftClampServo.setPosition(.4);
-                }
-                else if(gamepad1.dpad_left)
-                {
-                    closeClamp(rightClampServo.getPosition());
-                }
             }
 
             // Show the elapsed game time and wheel power
@@ -207,64 +160,39 @@ public class teleOPFinal extends LinearOpMode {
     }
 
     public void updateTelemetry(){
+        //[dont need to make variables for servo values (redundent)]
         //double armServoValue = armServo.getPosition();
         //double leftClampValue = leftClampServo.getPosition();
         //double rightClampValue = rightClampServo.getPosition();
         //boolean aButton = gamepad1.a;
         telemetry.addData("Status", "Run Time   : " + runtime.toString());
         telemetry.addData("Arm servo position   : " , armServo.getPosition());
+        telemetry.addData("Left clamp position  : " , leftClampServo.getPosition());
         telemetry.addData("Right clamp position : " , rightClampServo.getPosition());
-        telemetry.addData("left motor power", motor2.getPower());
-        telemetry.addData("right motor power", motor3.getPower());
-        telemetry.addData("left encoder", motor2.getCurrentPosition());
-        telemetry.addData("right encoder", motor3.getCurrentPosition());
-        telemetry.addData("front motor power", motor1.getPower());
+        telemetry.addData("a button             : " , gamepad1.a);
         telemetry.addData("x value right stick  : " , gamepad1.right_stick_x);
         telemetry.addData("y value right stick  : " , -gamepad1.right_stick_y);
-        AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate;
-        telemetry.addData("x rotation rate : " , v_x);
+        telemetry.addData("motor 1 power        : " , motor1.getPower());
+        telemetry.addData("motor 2 power        : " , motor2.getPower());
+        telemetry.addData("motor 3 power        : " , motor3.getPower());
 
         telemetry.update();
-    }
-
-    public double sigmoid(double x) {
-        return 1 / (1 + Math.exp(-x));
     }
 
     //drive method that accepts two values, x and y motion
     public void drive(double x, double y)
     {
-        double scale = 1;
+        //double power1 = x;
+        //double power2 = ((-.5) * x) - ((sqrt(3)/(double)2) * y);
+        //double power3 = ((-.5) * x) + ((sqrt(3)/(double)2) * y);
+        double divisor = 1;
         // for precise movement
-        //if (gamepad1.right_bumper) {
-        //    scale = 0.5;
-        //}
-
-        
-        final float correctionZoneDegrees = 5;
-        AngularVelocity v = gyro.getAngularVelocity();
-        float v_x = v.xRotationRate; // positive is clockwise
-        double correctionValue = 0;
-        if (Math.abs(v_x) > correctionZoneDegrees)
-        {
-            correctionValue = (double)(v_x / 200.0);
+        if (gamepad1.right_bumper) {
+            divisor = 2;
         }
-        
-        double power1 = scale * x;
-        double power2 = (scale * (((-.5) * x) - (sqrt(3)/2) * y)) - correctionValue;
-        double power3 = (scale * (((-.5) * x) + (sqrt(3)/2) * y)) - correctionValue;
-
-        
-        
-        motor1.setPower(power1);
-        motor2.setPower(power2);
-        motor3.setPower(power3);
-
-        telemetry.addData("motor 3 power" , power2);
-        telemetry.addData("motor 2 power" , power3);
-        telemetry.addData("correction value" , correctionValue);
-
+        motor1.setPower(x / divisor);
+        motor2.setPower((((-.5) * x) - ((sqrt(3)/2.0) * y)) / divisor);
+        motor3.setPower((((-.5) * x) + ((sqrt(3)/2.0) * y)) / divisor);
     }
 
     private void turnOffMotors()
@@ -284,38 +212,6 @@ public class teleOPFinal extends LinearOpMode {
         motor1.setPower(-speed/divisor);
         motor3.setPower(-speed/divisor);
         motor2.setPower(-speed/divisor);
-    }
-
-    private void setClampPosition(double newClampPosition)
-    {
-        rightClampServo.setPosition(newClampPosition);
-        leftClampServo.setPosition(newClampPosition);
-    }
-
-    private void closeClamp(double currentPosition)
-    {
-        double newPosition = currentPosition + .0005;
-        rightClampServo.setPosition(newPosition);
-        leftClampServo.setPosition(newPosition);
-    }
-
-    private  void openClamp(double currentPosition)
-    {
-        double newPosition = currentPosition - .0005;
-        rightClampServo.setPosition(newPosition);
-        leftClampServo.setPosition(newPosition);
-    }
-
-    private void liftArm(double currentPosition)
-    {
-        double newPosition = currentPosition - .001;
-        armServo.setPosition(newPosition);
-    }
-
-    private  void lowerArm(double currentPosition)
-    {
-        double newPosition = currentPosition + .001;
-        armServo.setPosition(newPosition);
     }
     
 }
