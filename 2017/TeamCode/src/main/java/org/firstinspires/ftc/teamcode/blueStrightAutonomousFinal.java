@@ -102,11 +102,11 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
 
     final private double TURNOFFMOTORS = LATERALLINEUPWITHCOLUMN + .1; // turn off motor
     final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .1; // lower arm
-    final private double PHASEFOUR = PHASETHREEHALFHALF + .5; // open clamp
-    final private double PHASEFIVE = PHASEFOUR + 1.5; // drive forward
+    final private double PHASEFOUR = PHASETHREEHALFHALF + 1.5; // drive forward
+    final private double PHASEFIVE = PHASEFOUR + .5; // open clamp
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
-    final private double PHASESIX = PHASEFIVEHALF + .5; //turn
-    final private double PHASESEVEN = PHASESIX + .2; // back up
+    final private double PHASESIX = PHASEFIVEHALF + .4; //turn
+    final private double PHASESEVEN = PHASESIX + .4; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
 
     final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
@@ -260,15 +260,16 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASETHREEHALFHALF)
             {
-                armServo.setPosition(DOWNARMPOSITION);
+                armServo.setPosition(.75);
             }
             else if (elapsedTime < PHASEFOUR)
             {
-                setClampPosition(OPENCLAMPPOSITION);
+                drive(0, 0.5);
             }
             else if (elapsedTime < PHASEFIVE)
             {
-                drive(0, 0.5);
+                turnOffMotors();
+                setClampPosition(OPENCLAMPPOSITION);
             }
             else if (elapsedTime < PHASEFIVEHALF)
             {
@@ -276,7 +277,7 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASESIX)
             {
-                turn(.5);
+                turn(-.5);
             }
             else if (elapsedTime < PHASESEVEN)
             {

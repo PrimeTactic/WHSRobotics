@@ -103,7 +103,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
     final private double PHASESIXHALF = PHASESIX + .1; // turn off motors
     final private double PHASESEVEN = PHASESIXHALF + .5; // open clamp
     final private double PHASEEIGHT = PHASESEVEN + .5; // turn
-    final private double PHASENINE = PHASEEIGHT + .3; // back up
+    final private double PHASENINE = PHASEEIGHT + .2; // back up
     final private double PHASENINEHALF = PHASENINE + .1; // turn off motors
 
     final private double TURNTOWARDSGLYPHPIT = PHASENINEHALF + .6; // turn towards glyph pit
@@ -169,6 +169,8 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         boolean test = true;
+        double speed = .8;
+        Boolean isDetected = false;
         while (opModeIsActive())
         {
 
@@ -199,8 +201,6 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
                 runtime.reset();
             }*/
             elapsedTime = runtime.time();
-            double speed = .8;
-            Boolean isDetected = false;
             if (elapsedTime < JEWELCLOSECLAMP)
             {
                 clamp(CLOSECLAMPPOSITION);
@@ -233,9 +233,10 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < JEWELSPINBACK)
             {
-                turn(speed);
+                turn(-speed);
             }
             else if (elapsedTime < LIFTARM) {
+                turnOffMotors();
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
             else if(elapsedTime < PHASETHREE)
@@ -252,7 +253,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEFIVE)
             {
-                turn(.5/2);
+                turn(.5);
             }
             else if (elapsedTime < PHASESIX)
             {
@@ -268,7 +269,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEEIGHT)
             {
-                turn(.5/2);
+                turn(.5);
             }
             else if (elapsedTime < PHASENINE)
             {
@@ -278,7 +279,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             {
                 turnOffMotors();
             }
-            else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            /*else if (elapsedTime < TURNTOWARDSGLYPHPIT)
             {
                 turn(1);
             }
@@ -301,7 +302,7 @@ public class redNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else {
                 turnOffMotors();
-            }
+            }*/
             updateTelemetry();
         }
     }

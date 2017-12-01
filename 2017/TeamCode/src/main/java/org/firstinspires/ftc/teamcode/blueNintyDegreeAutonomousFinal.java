@@ -95,15 +95,16 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
     final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
 
     final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
-    final private double PHASETHREE = LIFTARM + 1.8; // drive backward
+    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 1.3; // turn 180
+    final private double PHASETHREE = TURNTOLINEUPWITHCOLUMNS + 1.8; // drive forward
     final private double PHASETHREEHALF = PHASETHREE + .1; // turn off motors
     final private double PHASEFOUR = PHASETHREEHALF + .5; // lowerarm
-    final private double PHASEFIVE = PHASEFOUR + .6; // turn to face columns
-    final private double PHASESIX = PHASEFIVE + 2; // drive stright
+    final private double PHASEFIVE = PHASEFOUR + 1; // turn to face columns
+    final private double PHASESIX = PHASEFIVE + 2.2; // drive stright
     final private double PHASESIXHALF = PHASESIX + .1; // turn off motors
     final private double PHASESEVEN = PHASESIXHALF + .5; // open clamp
-    final private double PHASEEIGHT = PHASESEVEN + .5; // turn
-    final private double PHASENINE = PHASEEIGHT + .3; // back up
+    final private double PHASEEIGHT = PHASESEVEN + .4; // turn
+    final private double PHASENINE = PHASEEIGHT + .4; // back up
     final private double PHASENINEHALF = PHASENINE + .1; // turn off motors
 
     final private double TURNTOWARDSGLYPHPIT = PHASENINEHALF + .6; // turn towards glyph pit
@@ -170,7 +171,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         boolean test = true;
         double speed = .8;
-        boolean isDetected = false;
+        Boolean isDetected = false;
         while (opModeIsActive())
         {
 
@@ -236,11 +237,16 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
                 turn(-speed);
             }
             else if (elapsedTime < LIFTARM) {
+                turnOffMotors();
                 armServo.setPosition(LIFTEDARMPOSITION);
+            }
+            else if (elapsedTime < TURNTOLINEUPWITHCOLUMNS)
+            {
+                turn(-0.5);
             }
             else if(elapsedTime < PHASETHREE)
             {
-                drive(0, -.5);
+                drive(0, .5);
             }
             else if(elapsedTime < PHASETHREEHALF)
             {
@@ -252,7 +258,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEFIVE)
             {
-                turn(.5/2);
+                turn(-.5);
             }
             else if (elapsedTime < PHASESIX)
             {
@@ -268,7 +274,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEEIGHT)
             {
-                turn(.5/2);
+                turn(.5);
             }
             else if (elapsedTime < PHASENINE)
             {
@@ -278,7 +284,7 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             {
                 turnOffMotors();
             }
-           /* else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            /*else if (elapsedTime < TURNTOWARDSGLYPHPIT)
             {
                 turn(1);
             }
@@ -298,10 +304,10 @@ public class blueNintyDegreeAutonomousFinal extends LinearOpMode {
             else if (elapsedTime < TURNTOFACECOLUMNS)
             {
                 turn(1);
-            }*/
+            }
             else {
                 turnOffMotors();
-            }
+            }*/
             updateTelemetry();
         }
     }

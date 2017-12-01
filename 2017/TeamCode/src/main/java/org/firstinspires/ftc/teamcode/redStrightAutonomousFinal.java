@@ -94,15 +94,15 @@ public class redStrightAutonomousFinal extends LinearOpMode {
     final private double JEWELSTOREARM = JEWELSHEATHARM + .5; // store arm
     final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
     final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
-    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 0.2; // turn on platform
+    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 0.15; // turn on platform
     final private double DRIVETOWARDSCOLUMNS = TURNTOLINEUPWITHCOLUMNS + 2.4; // drive forward
     final private double TURNOFFMOTORS = DRIVETOWARDSCOLUMNS + .1; // turn off motor
-    final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .1; // lower arm
-    final private double PHASEFOUR = PHASETHREEHALFHALF + .5; // open clamp
-    final private double PHASEFIVE = PHASEFOUR + 2; // drive forward
+    final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .5; // lower arm
+    final private double PHASEFOUR = PHASETHREEHALFHALF + 2; // drive forward
+    final private double PHASEFIVE = PHASEFOUR + .5; // open clamp
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
     final private double PHASESIX = PHASEFIVEHALF + .5; //turn
-    final private double PHASESEVEN = PHASESIX + .8; // back up
+    final private double PHASESEVEN = PHASESIX + .4; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
     final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
     final private double DRIVETOGLYPHPIT = TURNTOWARDSGLYPHPIT + 2.4; // drive to the glyph pit
@@ -167,6 +167,8 @@ public class redStrightAutonomousFinal extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         boolean test = true;
+        double speed = .8;
+        Boolean isDetected = false;
         while (opModeIsActive())
         {
 
@@ -197,8 +199,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
                 runtime.reset();
             }*/
             elapsedTime = runtime.time();
-            double speed = .8;
-            Boolean isDetected = false;
+
             if (elapsedTime < JEWELCLOSECLAMP)
             {
                 clamp(CLOSECLAMPPOSITION);
@@ -231,7 +232,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < JEWELSPINBACK)
             {
-                turn(speed);
+                turn(-speed);
             }
             else if (elapsedTime < LIFTARM) {
                 turnOffMotors();
@@ -255,11 +256,12 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             }
             else if (elapsedTime < PHASEFOUR)
             {
-                setClampPosition(OPENCLAMPPOSITION);
+                drive(0, 0.5);
             }
             else if (elapsedTime < PHASEFIVE)
             {
-                drive(0, 0.5);
+                turnOffMotors();
+                setClampPosition(OPENCLAMPPOSITION);
             }
             else if (elapsedTime < PHASEFIVEHALF)
             {
@@ -277,7 +279,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             {
                 turnOffMotors();
             }
-            else if (elapsedTime < TURNTOWARDSGLYPHPIT)
+            /*else if (elapsedTime < TURNTOWARDSGLYPHPIT)
             {
                 turn(1);
             }
@@ -300,7 +302,7 @@ public class redStrightAutonomousFinal extends LinearOpMode {
             }
             else {
                 turnOffMotors();
-            }
+            }*/
             updateTelemetry();
         }
     }
