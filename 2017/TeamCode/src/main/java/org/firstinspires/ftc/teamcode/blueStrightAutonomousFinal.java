@@ -94,10 +94,11 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
     final private double JEWELSTOREARM = JEWELSHEATHARM + .5; // store arm
     final private double JEWELSPINBACK = JEWELSTOREARM + .1; // turn back to compensate for knock off jewel turn
     final private double LIFTARM = JEWELSPINBACK + 2; //lift arm
-    final private double DRIVETOWARDSCOLUMNS = LIFTARM + 1.4; // backward
-    final private double TURNTOLINEUPWITHCOLUMNS = DRIVETOWARDSCOLUMNS + 1.4; // turn on face columns
 
-    final private double LATERALLINEUPWITHCOLUMN = TURNTOLINEUPWITHCOLUMNS + 1; // turn off motor
+    final private double TURNTOLINEUPWITHCOLUMNS = LIFTARM + 1.3; // turn on face columns
+    final private double DRIVETOWARDSCOLUMNS = TURNTOLINEUPWITHCOLUMNS + 1; // forward
+
+    final private double LATERALLINEUPWITHCOLUMN = DRIVETOWARDSCOLUMNS + .7; // turn off motor
 
     final private double TURNOFFMOTORS = LATERALLINEUPWITHCOLUMN + .1; // turn off motor
     final private double PHASETHREEHALFHALF = TURNOFFMOTORS + .1; // lower arm
@@ -105,7 +106,7 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
     final private double PHASEFIVE = PHASEFOUR + 1.5; // drive forward
     final private double PHASEFIVEHALF = PHASEFIVE + .1; //stop motors
     final private double PHASESIX = PHASEFIVEHALF + .5; //turn
-    final private double PHASESEVEN = PHASESIX + .8; // back up
+    final private double PHASESEVEN = PHASESIX + .2; // back up
     final private double PHASESEVENHALF = PHASESEVEN + .1; // turn off motors
 
     final private double TURNTOWARDSGLYPHPIT = PHASESEVENHALF + .6; // turn towards glyph pit
@@ -241,13 +242,13 @@ public class blueStrightAutonomousFinal extends LinearOpMode {
                 turnOffMotors();
                 armServo.setPosition(LIFTEDARMPOSITION);
             }
-            else if(elapsedTime < DRIVETOWARDSCOLUMNS)
-            {
-                drive(0, -.5);
-            }
             else if (elapsedTime < TURNTOLINEUPWITHCOLUMNS)
             {
                 turn(-0.5);
+            }
+            else if(elapsedTime < DRIVETOWARDSCOLUMNS)
+            {
+                drive(0, .5);
             }
             else if (elapsedTime < LATERALLINEUPWITHCOLUMN)
             {
